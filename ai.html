@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NoviAI Workspace</title>
+
+    <link rel="stylesheet" href="ai.css">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">✦</div>
+            <span>NoviAI</span>
+        </div>
+
+        <button class="new-chat" onclick="location.reload()">
+            <span>＋</span>
+            New Chat
+        </button>
+
+        <nav class="sidebar-nav">
+
+            <button class="nav-item active" onclick="setMode('Study')">
+                <span class="nav-icon">📚</span>
+                <span>Study</span>
+            </button>
+
+            <button class="nav-item" onclick="setMode('Create')">
+                <span class="nav-icon">📝</span>
+                <span>Create</span>
+            </button>
+
+            <button class="nav-item" onclick="setMode('Ask')">
+                <span class="nav-icon">💡</span>
+                <span>Ask Anything</span>
+            </button>
+
+            <button class="nav-item" onclick="setMode('Support')">
+                <span class="nav-icon">💙</span>
+                <span>Support</span>
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <button class="bottom-item">
+                <span>⚙️</span>
+                Settings
+            </button>
+
+            <button class="bottom-item" onclick="window.location.href='index.html'">
+                <span>🏠</span>
+                Home
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+                <h1 id="pageTitle">Ask NoviAI</h1>
+                <p id="pageSubtitle">
+                    Ask questions and get helpful answers.
+                </p>
+            </div>
+
+            <div class="status">
+                <span class="status-dot"></span>
+                <span>Ready</span>
+            </div>
+
+        </header>
+
+
+        <!-- ================= CHAT ================= -->
+
+        <section class="chat-area" id="chat">
+
+            <div class="welcome">
+
+                <div class="welcome-icon">
+                    ✦
+                </div>
+
+                <h2>Hello! 👋</h2>
+
+                <p>
+                    I'm NoviAI. What can I help you with today?
+                </p>
+
+                <div class="quick-actions">
+
+                    <button onclick="usePrompt('Explain a topic')">
+                        <span>📚</span>
+                        Explain a topic
+                    </button>
+
+                    <button onclick="usePrompt('Create a study plan')">
+                        <span>📅</span>
+                        Create a study plan
+                    </button>
+
+                    <button onclick="usePrompt('Write a proposal')">
+                        <span>📝</span>
+                        Write a proposal
+                    </button>
+
+                    <button onclick="usePrompt('Talk to me')">
+                        <span>💙</span>
+                        Talk to me
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= INPUT ================= -->
+
+        <div class="composer-wrapper">
+
+            <div class="composer">
+
+                <button class="attach-btn" type="button" title="Attach">
+                    📎
+                </button>
+
+                <textarea
+                    id="messageInput"
+                    placeholder="Ask NoviAI anything..."
+                    rows="1"
+                    onkeydown="handleKeyDown(event)"
+                ></textarea>
+
+                <button
+                    id="sendButton"
+                    class="send-btn"
+                    onclick="sendMessage()"
+                    type="button"
+                    aria-label="Send message"
+                >
+                    ➤
+                </button>
+
+            </div>
+
+            <p class="disclaimer">
+                NoviAI can make mistakes. Check important information.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- Keep your existing working AI JavaScript -->
+<script src="ai.js"></script>
+
+</body>
+</html>

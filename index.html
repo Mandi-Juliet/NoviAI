@@ -1,0 +1,974 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NoviAI — Learn. Create. Ask.</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(124, 58, 237, 0.20), transparent 35%),
+                radial-gradient(circle at 85% 70%, rgba(59, 130, 246, 0.15), transparent 35%),
+                #070714;
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            height: 82px;
+            padding: 0 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: rgba(7, 7, 20, 0.82);
+            backdrop-filter: blur(15px);
+
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -1px;
+
+            background: linear-gradient(
+                90deg,
+                #ffffff,
+                #a78bfa,
+                #60a5fa
+            );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo span {
+            color: #8b5cf6;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 34px;
+        }
+
+        nav a {
+            color: #b8b8ca;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.25s;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        .nav-button {
+            padding: 13px 22px;
+            border-radius: 12px;
+            border: 1px solid rgba(139,92,246,0.5);
+
+            background: linear-gradient(
+                135deg,
+                #7c3aed,
+                #4f46e5
+            );
+
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+
+            box-shadow: 0 8px 25px rgba(124,58,237,0.3);
+
+            transition: 0.25s;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(124,58,237,0.5);
+        }
+
+        /* ================= HERO ================= */
+
+        .hero {
+            min-height: 690px;
+            padding: 100px 7% 80px;
+
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+
+            align-items: center;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+
+            width: 500px;
+            height: 500px;
+
+            background: rgba(124,58,237,0.13);
+            filter: blur(100px);
+
+            top: 100px;
+            left: -200px;
+
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+
+            padding: 9px 16px;
+
+            border: 1px solid rgba(139,92,246,0.3);
+            border-radius: 30px;
+
+            background: rgba(124,58,237,0.08);
+
+            color: #c4b5fd;
+
+            font-size: 15px;
+            font-weight: 700;
+
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: clamp(52px, 6vw, 82px);
+            line-height: 0.98;
+            letter-spacing: -4px;
+
+            max-width: 760px;
+
+            margin-bottom: 28px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(
+                90deg,
+                #a78bfa,
+                #60a5fa,
+                #c084fc
+            );
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            color: #a9a9bd;
+            font-size: 21px;
+            line-height: 1.7;
+
+            max-width: 680px;
+
+            margin-bottom: 38px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .primary-button,
+        .secondary-button {
+            padding: 17px 28px;
+
+            border-radius: 14px;
+
+            font-size: 17px;
+            font-weight: 700;
+
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .primary-button {
+            border: none;
+
+            color: white;
+
+            background: linear-gradient(
+                135deg,
+                #8b5cf6,
+                #4f46e5
+            );
+
+            box-shadow: 0 12px 35px rgba(124,58,237,0.35);
+        }
+
+        .primary-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 45px rgba(124,58,237,0.5);
+        }
+
+        .secondary-button {
+            border: 1px solid rgba(255,255,255,0.13);
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        .secondary-button:hover {
+            background: rgba(255,255,255,0.09);
+            transform: translateY(-3px);
+        }
+
+        /* ================= AI CARD ================= */
+
+        .ai-preview {
+            position: relative;
+            z-index: 2;
+
+            padding: 26px;
+
+            border-radius: 25px;
+
+            background: linear-gradient(
+                145deg,
+                rgba(255,255,255,0.09),
+                rgba(255,255,255,0.025)
+            );
+
+            border: 1px solid rgba(255,255,255,0.12);
+
+            box-shadow:
+                0 30px 80px rgba(0,0,0,0.45),
+                inset 0 1px rgba(255,255,255,0.08);
+
+            backdrop-filter: blur(20px);
+        }
+
+        .ai-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 28px;
+        }
+
+        .ai-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .ai-icon {
+            width: 40px;
+            height: 40px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 12px;
+
+            background: linear-gradient(
+                135deg,
+                #8b5cf6,
+                #4f46e5
+            );
+        }
+
+        .online {
+            font-size: 13px;
+            color: #86efac;
+        }
+
+        .message {
+            background: rgba(255,255,255,0.055);
+
+            border: 1px solid rgba(255,255,255,0.07);
+
+            border-radius: 17px;
+
+            padding: 20px;
+
+            margin-bottom: 16px;
+        }
+
+        .message.small {
+            margin-left: 45px;
+        }
+
+        .message-title {
+            font-size: 13px;
+            color: #a78bfa;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .message p {
+            color: #d5d5df;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .preview-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+
+            margin-top: 22px;
+        }
+
+        .preview-button {
+            padding: 14px;
+
+            border-radius: 12px;
+
+            border: 1px solid rgba(255,255,255,0.09);
+
+            background: rgba(255,255,255,0.045);
+
+            color: white;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .preview-button:hover {
+            background: rgba(139,92,246,0.16);
+            border-color: rgba(139,92,246,0.35);
+        }
+
+        /* ================= FEATURES ================= */
+
+        #features {
+            padding: 100px 7%;
+        }
+
+        .section-heading {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 55px;
+        }
+
+        .section-heading h2 {
+            font-size: 48px;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+        }
+
+        .section-heading p {
+            color: #9696aa;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .feature-card {
+            padding: 32px;
+
+            min-height: 260px;
+
+            border-radius: 22px;
+
+            background: linear-gradient(
+                145deg,
+                rgba(255,255,255,0.07),
+                rgba(255,255,255,0.025)
+            );
+
+            border: 1px solid rgba(255,255,255,0.09);
+
+            transition: 0.3s;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: "";
+
+            position: absolute;
+
+            width: 150px;
+            height: 150px;
+
+            background: rgba(139,92,246,0.12);
+
+            filter: blur(50px);
+
+            right: -60px;
+            bottom: -60px;
+
+            border-radius: 50%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-7px);
+
+            border-color: rgba(139,92,246,0.4);
+
+            box-shadow:
+                0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .feature-icon {
+            font-size: 35px;
+            margin-bottom: 25px;
+        }
+
+        .feature-card h3 {
+            font-size: 25px;
+            margin-bottom: 13px;
+        }
+
+        .feature-card p {
+            color: #a5a5b8;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        /* ================= CTA ================= */
+
+        .cta {
+            margin: 60px 7% 100px;
+
+            padding: 75px 30px;
+
+            text-align: center;
+
+            border-radius: 30px;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    rgba(124,58,237,0.3),
+                    transparent 65%
+                ),
+                rgba(255,255,255,0.04);
+
+            border: 1px solid rgba(139,92,246,0.22);
+        }
+
+        .cta h2 {
+            font-size: 48px;
+            letter-spacing: -2px;
+            margin-bottom: 18px;
+        }
+
+        .cta p {
+            color: #aaaabd;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            padding: 35px 7%;
+
+            border-top: 1px solid rgba(255,255,255,0.07);
+
+            color: #77778b;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        footer strong {
+            color: white;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 900px) {
+
+            header {
+                padding: 0 5%;
+            }
+
+            nav a {
+                display: none;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 80px 5% 60px;
+            }
+
+            .hero h1 {
+                font-size: 55px;
+            }
+
+            .hero-description {
+                font-size: 18px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #features {
+                padding: 70px 5%;
+            }
+
+            .section-heading h2 {
+                font-size: 38px;
+            }
+
+            .cta {
+                margin-left: 5%;
+                margin-right: 5%;
+            }
+
+            .cta h2 {
+                font-size: 38px;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .nav-button {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+
+            .hero {
+                padding-top: 65px;
+            }
+
+            .hero h1 {
+                font-size: 46px;
+                letter-spacing: -2px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .primary-button,
+            .secondary-button {
+                width: 100%;
+            }
+
+            .ai-preview {
+                padding: 18px;
+            }
+
+            .preview-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <header>
+
+        <div class="logo">
+            ✦ NoviAI
+        </div>
+
+        <nav>
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+
+            <button class="nav-button" onclick="openAI()">
+                Try NoviAI →
+            </button>
+        </nav>
+
+    </header>
+
+
+    <!-- HERO -->
+
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <div class="eyebrow">
+                    ✦ Your intelligent everyday companion
+                </div>
+
+                <h1>
+                    Learn smarter.<br>
+                    <span class="gradient-text">
+                        Create better.
+                    </span>
+                </h1>
+
+                <p class="hero-description">
+                    NoviAI helps you study, understand difficult topics,
+                    create plans and proposals, answer questions, and get
+                    supportive guidance whenever you need it.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <button
+                        class="primary-button"
+                        onclick="openAI()"
+                    >
+                        Start Using NoviAI →
+                    </button>
+
+                    <button
+                        class="secondary-button"
+                        onclick="scrollToFeatures()"
+                    >
+                        Explore Features
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- AI PREVIEW -->
+
+            <div class="ai-preview">
+
+                <div class="ai-top">
+
+                    <div class="ai-name">
+
+                        <div class="ai-icon">
+                            ✦
+                        </div>
+
+                        <div>
+                            NoviAI
+                        </div>
+
+                    </div>
+
+                    <div class="online">
+                        ● Online
+                    </div>
+
+                </div>
+
+
+                <div class="message">
+
+                    <div class="message-title">
+                        YOU
+                    </div>
+
+                    <p>
+                        Help me understand a difficult topic.
+                    </p>
+
+                </div>
+
+
+                <div class="message small">
+
+                    <div class="message-title">
+                        NOVIAI
+                    </div>
+
+                    <p>
+                        Of course! I'll explain it step by step
+                        and make it easy to understand. ✨
+                    </p>
+
+                </div>
+
+
+                <div class="preview-buttons">
+
+                    <button
+                        class="preview-button"
+                        onclick="openAI()"
+                    >
+                        📚 Study
+                    </button>
+
+                    <button
+                        class="preview-button"
+                        onclick="openAI()"
+                    >
+                        📝 Create
+                    </button>
+
+                    <button
+                        class="preview-button"
+                        onclick="openAI()"
+                    >
+                        💡 Ask Anything
+                    </button>
+
+                    <button
+                        class="preview-button"
+                        onclick="openAI()"
+                    >
+                        💙 Support
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FEATURES -->
+
+        <section id="features">
+
+            <div class="section-heading">
+
+                <h2>
+                    Everything you need.
+                    <span class="gradient-text">
+                        In one place.
+                    </span>
+                </h2>
+
+                <p>
+                    NoviAI brings studying, creating, asking questions,
+                    and everyday support together in one simple AI assistant.
+                </p>
+
+            </div>
+
+
+            <div class="feature-grid">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        📚
+                    </div>
+
+                    <h3>
+                        Study
+                    </h3>
+
+                    <p>
+                        Understand difficult topics, revise lessons,
+                        practise questions, create quizzes, and prepare
+                        for exams.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        📝
+                    </div>
+
+                    <h3>
+                        Create
+                    </h3>
+
+                    <p>
+                        Turn your ideas into structured plans,
+                        proposals, reports, essays, and projects.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        💡
+                    </div>
+
+                    <h3>
+                        Ask Anything
+                    </h3>
+
+                    <p>
+                        Ask questions across different subjects and
+                        everyday topics and receive clear explanations.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        💙
+                    </div>
+
+                    <h3>
+                        Support
+                    </h3>
+
+                    <p>
+                        Talk things through, reflect on your thoughts,
+                        or simply have someone to chat with.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        ⚡
+                    </div>
+
+                    <h3>
+                        Fast Answers
+                    </h3>
+
+                    <p>
+                        Get useful responses without complicated menus
+                        or unnecessary steps.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        ✨
+                    </div>
+
+                    <h3>
+                        One Assistant
+                    </h3>
+
+                    <p>
+                        One AI companion for learning, creating,
+                        exploring ideas, and getting help.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CTA -->
+
+        <section class="cta">
+
+            <h2>
+                Ready to meet NoviAI?
+            </h2>
+
+            <p>
+                Learn. Create. Ask. Everything starts with one question.
+            </p>
+
+            <button
+                class="primary-button"
+                onclick="openAI()"
+            >
+                Try NoviAI →
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <div>
+            ✦ <strong>NoviAI</strong>
+        </div>
+
+        <div>
+            Learn • Create • Ask
+        </div>
+
+        <div>
+            © 2026 NoviAI
+        </div>
+
+    </footer>
+
+
+    <!-- YOUR EXISTING JAVASCRIPT -->
+
+    <script>
+
+        function openAI() {
+            window.location.href = "ai.html";
+        }
+
+        function scrollToFeatures() {
+            document
+                .getElementById("features")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+        }
+
+        function selectMode(mode) {
+            window.location.href = "ai.html";
+        }
+
+    </script>
+
+</body>
+</html>
+```
