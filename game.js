@@ -1,4 +1,4 @@
-```javascript
+
 const player = document.getElementById("player");
 const gameArea = document.getElementById("gameArea");
 
@@ -556,4 +556,4 @@ document.addEventListener(
 /* ================= INITIAL POSITION ================= */
 
 player.style.left = getLanePosition(1);
-```
+
