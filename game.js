@@ -1,519 +1,188 @@
-/* =========================================
-   NOVIAI CHASE
-   ========================================= */
+const game = document.getElementById("game");
+const player = document.getElementById("player");
+const objects = document.getElementById("objects");
 
-const game =
-    document.getElementById("game");
+const scoreDisplay = document.getElementById("score");
+const finalScore = document.getElementById("final-score");
 
-const road =
-    document.getElementById("road");
+const startScreen = document.getElementById("start-screen");
+const gameOverScreen = document.getElementById("game-over");
 
-const player =
-    document.getElementById("player");
+const startButton = document.getElementById("startButton");
+const restartButton = document.getElementById("restartButton");
 
-const chaser =
-    document.getElementById("chaser");
-
-const objects =
-    document.getElementById("objects");
-
+const leftButton = document.getElementById("leftButton");
+const rightButton = document.getElementById("rightButton");
+const jumpButton = document.getElementById("jumpButton");
 
 let running = false;
-
 let score = 0;
+let lane = 1;
 
-let lives = 3;
+let speed = 5;
+let spawnTimer = 0;
 
-let level = 1;
-
-let playerLane = 1;
-
-let playerJumping = false;
-
-let gameSpeed = 4;
-
-let chaserDistance = 0;
-
-let objectTimer;
+let playerY = 0;
+let jumping = false;
 
 let gameLoop;
 
-let difficultyTimer;
+const lanes = [16.66, 50, 83.33];
 
+function setPlayerLane() {
 
-/* =========================
-   LANES
-   ========================= */
-
-function getLanePosition(lane) {
-
-    const roadWidth =
-        road.clientWidth;
-
-    const laneWidth =
-        roadWidth / 3;
-
-    return (
-        laneWidth * lane +
-        laneWidth / 2
-    );
+```
+player.style.left = lanes[lane] + "%";
+```
 
 }
-
-
-/* =========================
-   PLAYER POSITION
-   ========================= */
-
-function updatePlayerPosition() {
-
-    player.style.left =
-        `${getLanePosition(playerLane)}px`;
-
-}
-
-
-/* =========================
-   START
-   ========================= */
-
-function startGame() {
-
-    document.getElementById(
-        "startScreen"
-    ).style.display = "none";
-
-    document.getElementById(
-        "gameOver"
-    ).style.display = "none";
-
-
-    score = 0;
-
-    lives = 3;
-
-    level = 1;
-
-    playerLane = 1;
-
-    gameSpeed = 4;
-
-    chaserDistance = 0;
-
-
-    updateStats();
-
-    updatePlayerPosition();
-
-
-    running = true;
-
-
-    objectTimer =
-        setInterval(
-            spawnObject,
-            850
-        );
-
-
-    difficultyTimer =
-        setInterval(
-            increaseDifficulty,
-            10000
-        );
-
-
-    gameLoop =
-        requestAnimationFrame(
-            updateGame
-        );
-
-}
-
-
-/* =========================
-   GAME LOOP
-   ========================= */
-
-function updateGame() {
-
-    if (!running) return;
-
-
-    const gameObjects =
-        document.querySelectorAll(
-            ".game-object"
-        );
-
-
-    gameObjects.forEach(
-        moveObject
-    );
-
-
-    updateChaser();
-
-
-    gameLoop =
-        requestAnimationFrame(
-            updateGame
-        );
-
-}
-
-
-/* =========================
-   SPAWN OBJECT
-   ========================= */
-
-function spawnObject() {
-
-    if (!running) return;
-
-
-    const object =
-        document.createElement("div");
-
-
-    object.classList.add(
-        "game-object"
-    );
-
-
-    const lane =
-        Math.floor(
-            Math.random() * 3
-        );
-
-
-    object.dataset.lane =
-        lane;
-
-
-    const random =
-        Math.random();
-
-
-    if (random < 0.55) {
-
-        object.classList.add(
-            "crystal"
-        );
-
-        object.textContent =
-            "🧠";
-
-        object.dataset.type =
-            "crystal";
-
-    }
-
-    else if (random < 0.85) {
-
-        object.classList.add(
-            "obstacle"
-        );
-
-        object.textContent =
-            "🚧";
-
-        object.dataset.type =
-            "obstacle";
-
-    }
-
-    else {
-
-        object.classList.add(
-            "boost"
-        );
-
-        object.textContent =
-            "⚡";
-
-        object.dataset.type =
-            "boost";
-
-    }
-
-
-    object.style.left =
-        `${getLanePosition(lane)}px`;
-
-    object.style.transform =
-        "translateX(-50%)";
-
-
-    object.style.top =
-        "-70px";
-
-
-    objects.appendChild(
-        object
-    );
-
-}
-
-
-/* =========================
-   MOVE OBJECT
-   ========================= */
-
-function moveObject(object) {
-
-    let top =
-        parseFloat(
-            object.style.top
-        );
-
-
-    top += gameSpeed;
-
-
-    object.style.top =
-        `${top}px`;
-
-
-    if (
-        top >
-        road.clientHeight
-    ) {
-
-        object.remove();
-
-        return;
-
-    }
-
-
-    checkCollision(object);
-
-}
-
-
-/* =========================
-   COLLISION
-   ========================= */
-
-function checkCollision(object) {
-
-    const objectTop =
-        parseFloat(
-            object.style.top
-        );
-
-
-    const playerBottom =
-        road.clientHeight -
-        80;
-
-
-    const collisionZone =
-        playerBottom - 55;
-
-
-    if (
-        objectTop >
-        collisionZone - 20 &&
-        objectTop <
-        collisionZone + 50 &&
-        Number(object.dataset.lane) ===
-        playerLane
-    ) {
-
-        collectObject(object);
-
-    }
-
-}
-
-
-/* =========================
-   COLLECT
-   ========================= */
-
-function collectObject(object) {
-
-    const type =
-        object.dataset.type;
-
-
-    object.remove();
-
-
-    if (type === "crystal") {
-
-        score += 10;
-
-        showMessage(
-            "+10 🧠"
-        );
-
-    }
-
-
-    else if (type === "boost") {
-
-        score += 25;
-
-        gameSpeed += 1;
-
-        showMessage(
-            "⚡ SPEED BOOST!"
-        );
-
-        setTimeout(
-            () => {
-
-                gameSpeed =
-                    Math.max(
-                        4,
-                        gameSpeed - 1
-                    );
-
-            },
-            3000
-        );
-
-    }
-
-
-    else if (type === "obstacle") {
-
-        if (!playerJumping) {
-
-            lives--;
-
-            chaserDistance += 15;
-
-            showMessage(
-                "💥 Ouch!"
-            );
-
-            if (lives <= 0) {
-
-                endGame();
-
-            }
-
-        }
-
-    }
-
-
-    updateStats();
-
-}
-
-
-/* =========================
-   JUMP
-   ========================= */
-
-function jump() {
-
-    if (
-        !running ||
-        playerJumping
-    ) {
-
-        return;
-
-    }
-
-
-    playerJumping = true;
-
-
-    player.style.bottom =
-        "170px";
-
-
-    setTimeout(
-        () => {
-
-            player.style.bottom =
-                "80px";
-
-            playerJumping = false;
-
-        },
-        650
-    );
-
-}
-
-
-/* =========================
-   MOVE LEFT
-   ========================= */
 
 function moveLeft() {
 
-    if (!running) return;
+```
+if (!running) return;
 
+if (lane > 0) {
 
-    if (playerLane > 0) {
+    lane--;
 
-        playerLane--;
-
-        updatePlayerPosition();
-
-    }
+    setPlayerLane();
 
 }
+```
 
-
-/* =========================
-   MOVE RIGHT
-   ========================= */
+}
 
 function moveRight() {
 
-    if (!running) return;
+```
+if (!running) return;
 
+if (lane < 2) {
 
-    if (playerLane < 2) {
+    lane++;
 
-        playerLane++;
+    setPlayerLane();
 
-        updatePlayerPosition();
-
-    }
+}
+```
 
 }
 
+function jump() {
 
-/* =========================
-   CHASER
-   ========================= */
+```
+if (!running || jumping) return;
 
-function updateChaser() {
+jumping = true;
 
-    if (!running) return;
+playerY = 120;
 
+player.style.bottom = "190px";
 
-    chaserDistance +=
-        0.008 *
-        level;
+setTimeout(() => {
 
+    player.style.bottom = "70px";
 
-    if (
-        chaserDistance >= 100
-    ) {
+    playerY = 0;
 
-        lives--;
+    jumping = false;
 
-        chaserDistance = 0;
+}, 550);
+```
 
-        showMessage(
-            "👾 TOO CLOSE!"
-        );
+}
 
-        updateStats();
+function createObject() {
 
+```
+const object = document.createElement("div");
 
-        if (lives <= 0) {
+object.classList.add("object");
+
+const objectLane = Math.floor(Math.random() * 3);
+
+object.style.left = lanes[objectLane] + "%";
+
+object.style.transform = "translateX(-50%)";
+
+const isCoin = Math.random() < 0.35;
+
+if (isCoin) {
+
+    object.classList.add("coin");
+
+    object.textContent = "🪙";
+
+    object.dataset.type = "coin";
+
+} else {
+
+    object.classList.add("obstacle");
+
+    const obstacles = ["🚧", "🛑", "📦"];
+
+    object.textContent =
+        obstacles[Math.floor(Math.random() * obstacles.length)];
+
+    object.dataset.type = "obstacle";
+
+}
+
+object.style.top = "-70px";
+
+object.dataset.lane = objectLane;
+
+objects.appendChild(object);
+```
+
+}
+
+function checkCollision(object) {
+
+```
+const objectRect = object.getBoundingClientRect();
+const playerRect = player.getBoundingClientRect();
+
+const touching =
+    objectRect.left < playerRect.right &&
+    objectRect.right > playerRect.left &&
+    objectRect.top < playerRect.bottom &&
+    objectRect.bottom > playerRect.top;
+
+return touching;
+```
+
+}
+
+function updateObjects() {
+
+```
+const allObjects =
+    document.querySelectorAll(".object");
+
+allObjects.forEach(object => {
+
+    let currentTop =
+        parseFloat(object.style.top);
+
+    currentTop += speed;
+
+    object.style.top =
+        currentTop + "px";
+
+    if (checkCollision(object)) {
+
+        if (object.dataset.type === "coin") {
+
+            score += 10;
+
+            scoreDisplay.textContent =
+                score;
+
+            object.remove();
+
+        } else if (!jumping) {
 
             endGame();
 
@@ -521,257 +190,159 @@ function updateChaser() {
 
     }
 
+    if (currentTop > game.clientHeight + 100) {
 
-    const baseBottom = 15;
+        object.remove();
 
-    const extra =
-        chaserDistance * 0.4;
+    }
 
-
-    chaser.style.bottom =
-        `${baseBottom + extra}px`;
-
-}
-
-
-/* =========================
-   DIFFICULTY
-   ========================= */
-
-function increaseDifficulty() {
-
-    if (!running) return;
-
-
-    level++;
-
-
-    gameSpeed += 0.7;
-
-
-    showMessage(
-        `🔥 LEVEL ${level}`
-    );
-
-
-    updateStats();
+});
+```
 
 }
 
+function updateScore() {
 
-/* =========================
-   MESSAGE
-   ========================= */
+```
+if (!running) return;
 
-function showMessage(text) {
+score++;
 
-    const message =
-        document.getElementById(
-            "levelMessage"
-        );
+scoreDisplay.textContent =
+    score;
 
+if (score % 300 === 0) {
 
-    message.textContent =
-        text;
+    speed += 0.7;
 
-
-    message.classList.remove(
-        "show"
-    );
-
-
-    void message.offsetWidth;
-
-
-    message.classList.add(
-        "show"
-    );
+}
+```
 
 }
 
+function gameUpdate() {
 
-/* =========================
-   STATS
-   ========================= */
+```
+if (!running) return;
 
-function updateStats() {
+spawnTimer++;
 
-    document.getElementById(
-        "score"
-    ).textContent =
-        score;
+if (spawnTimer > Math.max(30, 75 - speed * 5)) {
 
+    createObject();
 
-    document.getElementById(
-        "lives"
-    ).textContent =
-        lives;
-
-
-    document.getElementById(
-        "level"
-    ).textContent =
-        level;
+    spawnTimer = 0;
 
 }
 
+updateObjects();
 
-/* =========================
-   GAME OVER
-   ========================= */
+gameLoop =
+    requestAnimationFrame(gameUpdate);
+```
+
+}
+
+function startGame() {
+
+```
+running = true;
+
+score = 0;
+speed = 5;
+lane = 1;
+spawnTimer = 0;
+
+scoreDisplay.textContent = "0";
+
+objects.innerHTML = "";
+
+setPlayerLane();
+
+startScreen.classList.add("hidden");
+gameOverScreen.classList.add("hidden");
+
+clearInterval(window.scoreTimer);
+
+window.scoreTimer =
+    setInterval(updateScore, 1000);
+
+cancelAnimationFrame(gameLoop);
+
+gameUpdate();
+```
+
+}
 
 function endGame() {
 
-    running = false;
+```
+if (!running) return;
 
+running = false;
 
-    clearInterval(
-        objectTimer
-    );
+cancelAnimationFrame(gameLoop);
 
-    clearInterval(
-        difficultyTimer
-    );
+clearInterval(window.scoreTimer);
 
+finalScore.textContent =
+    score;
 
-    cancelAnimationFrame(
-        gameLoop
-    );
-
-
-    document.getElementById(
-        "finalScore"
-    ).textContent =
-        score;
-
-
-    document.getElementById(
-        "gameOver"
-    ).style.display =
-        "flex";
-
-
-    objects.innerHTML = "";
+gameOverScreen.classList.remove("hidden");
+```
 
 }
 
+document.addEventListener("keydown", event => {
 
-/* =========================
-   RESTART
-   ========================= */
+```
+if (event.key === "ArrowLeft") {
 
-function restartGame() {
-
-    objects.innerHTML = "";
-
-
-    playerJumping = false;
-
-    player.style.bottom =
-        "80px";
-
-
-    chaser.style.bottom =
-        "15px";
-
-
-    startGame();
+    moveLeft();
 
 }
 
+if (event.key === "ArrowRight") {
 
-/* =========================
-   BACK TO AI
-   ========================= */
-
-function goBackToAI() {
-
-    window.location.href =
-        "ai.html";
+    moveRight();
 
 }
 
+if (
+    event.key === "ArrowUp" ||
+    event.key === " "
+) {
 
-/* =========================
-   KEYBOARD
-   ========================= */
+    jump();
 
-document.addEventListener(
-    "keydown",
-    function(event) {
+}
+```
 
-        if (
-            event.key === "ArrowLeft" ||
-            event.key.toLowerCase() === "a"
-        ) {
+});
 
-            moveLeft();
-
-        }
-
-
-        if (
-            event.key === "ArrowRight" ||
-            event.key.toLowerCase() === "d"
-        ) {
-
-            moveRight();
-
-        }
-
-
-        if (
-            event.key === "ArrowUp" ||
-            event.key === " " ||
-            event.key.toLowerCase() === "w"
-        ) {
-
-            event.preventDefault();
-
-            jump();
-
-        }
-
-    }
+leftButton.addEventListener(
+"click",
+moveLeft
 );
 
-
-/* =========================
-   MOBILE CONTROLS
-   ========================= */
-
-document.getElementById(
-    "leftButton"
-).addEventListener(
-    "click",
-    moveLeft
+rightButton.addEventListener(
+"click",
+moveRight
 );
 
-
-document.getElementById(
-    "rightButton"
-).addEventListener(
-    "click",
-    moveRight
+jumpButton.addEventListener(
+"click",
+jump
 );
 
-
-document.getElementById(
-    "jumpButton"
-).addEventListener(
-    "click",
-    jump
+startButton.addEventListener(
+"click",
+startGame
 );
 
-
-/* =========================
-   INITIAL POSITION
-   ========================= */
-
-window.addEventListener(
-    "resize",
-    updatePlayerPosition
+restartButton.addEventListener(
+"click",
+startGame
 );
 
-
-updatePlayerPosition();
+setPlayerLane();
