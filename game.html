@@ -1,106 +1,125 @@
 <!DOCTYPE html>
-
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
-<title>NoviAI Chase</title>
+    <title>NoviAI Chase</title>
 
-<link rel="stylesheet" href="game.css">
-```
-
+    <link rel="stylesheet" href="game.css">
 </head>
 
 <body>
 
-```
-<div class="game-wrapper">
+<div class="game">
 
-    <header class="game-header">
-        <div class="game-logo">✦ NoviAI Chase</div>
+    <!-- TOP HUD -->
+    <div class="hud">
 
-        <div class="score-area">
-            <span>⭐ Score</span>
-            <strong id="score">0</strong>
-        </div>
-    </header>
+        <div class="hud-left">
 
-    <main id="game">
-
-        <div class="sky"></div>
-
-        <div class="road">
-
-            <div class="lane lane-left"></div>
-            <div class="lane lane-middle"></div>
-            <div class="lane lane-right"></div>
-
-            <div id="player" class="player">
-                🏃
+            <div class="hud-box">
+                ⭐ <span id="score">0</span>
             </div>
 
-            <div id="objects"></div>
+            <div class="hud-box">
+                🪙 <span id="coins">0</span>
+            </div>
 
         </div>
 
-        <div id="start-screen" class="screen">
-
-            <div class="game-icon">✦</div>
-
-            <h1>NoviAI Chase</h1>
-
-            <p>
-                Run, dodge and collect coins!
-            </p>
-
-            <button id="startButton">
-                ▶ Start Game
-            </button>
-
-            <small>
-                Use ← → to move and ↑ to jump
-            </small>
-
+        <div class="game-title">
+            ✦ NoviAI Chase
         </div>
 
-        <div id="game-over" class="screen hidden">
+        <div class="hud-right">
 
-            <div class="game-icon">💥</div>
-
-            <h1>Game Over</h1>
-
-            <p>Your score</p>
-
-            <strong id="final-score">0</strong>
-
-            <button id="restartButton">
-                🔄 Play Again
-            </button>
+            <div class="hearts">
+                ❤️ ❤️ ❤️
+            </div>
 
         </div>
-
-    </main>
-
-    <div class="mobile-controls">
-
-        <button id="leftButton">⬅️</button>
-
-        <button id="jumpButton">⬆️</button>
-
-        <button id="rightButton">➡️</button>
 
     </div>
 
-    <footer>
-        ✦ NoviAI Chase • Learn. Create. Play.
-    </footer>
+
+    <!-- GAME CANVAS -->
+    <canvas id="gameCanvas"></canvas>
+
+
+    <!-- START SCREEN -->
+    <div id="startScreen" class="overlay">
+
+        <div class="logo-big">
+            ✦
+        </div>
+
+        <h1>NoviAI Chase</h1>
+
+        <p>
+            Run • Dodge • Collect • Survive
+        </p>
+
+        <button id="startBtn">
+            ▶ START GAME
+        </button>
+
+        <div class="instructions">
+            <div>⬅️ ➡️ Move</div>
+            <div>⬆️ Jump</div>
+            <div>⬇️ Slide</div>
+        </div>
+
+    </div>
+
+
+    <!-- GAME OVER -->
+    <div id="gameOverScreen" class="overlay hidden">
+
+        <div class="game-over-icon">
+            💥
+        </div>
+
+        <h1>Game Over</h1>
+
+        <p>Your Score</p>
+
+        <div id="finalScore">
+            0
+        </div>
+
+        <button id="restartBtn">
+            🔄 PLAY AGAIN
+        </button>
+
+    </div>
+
+
+    <!-- MOBILE CONTROLS -->
+    <div class="controls">
+
+        <button id="leftBtn">
+            ◀
+        </button>
+
+        <button id="jumpBtn">
+            ▲
+        </button>
+
+        <button id="slideBtn">
+            ▼
+        </button>
+
+        <button id="rightBtn">
+            ▶
+        </button>
+
+    </div>
 
 </div>
 
 <script src="game.js"></script>
-```
 
 </body>
 </html>
