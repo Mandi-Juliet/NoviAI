@@ -39,6 +39,13 @@
         <nav class="sidebar-nav">
 
             <button class="nav-item active" onclick="setMode('Study')">
+                ```html
+<button class="nav-item" onclick="openLearnLoop()">
+    <span class="nav-icon">🔄</span>
+    <span>LearnLoop</span>
+</button>
+```
+
                 <span class="nav-icon">📚</span>
                 <span>Study</span>
             </button>
@@ -874,6 +881,141 @@ function formatQuizText(text) {
 }
 
 </script>
+    ```html
+<!-- ================= LEARNLOOP ================= -->
+
+<div id="learnLoopModal" class="learnloop-modal">
+
+    <div class="learnloop-card">
+
+        <button
+            class="learnloop-close"
+            onclick="closeLearnLoop()"
+        >
+            ×
+        </button>
+
+        <div class="learnloop-icon">
+            🔄
+        </div>
+
+        <h2>NoviAI LearnLoop</h2>
+
+        <p class="learnloop-subtitle">
+            Learn it. Practise it. Master it.
+        </p>
+
+
+        <!-- START -->
+
+        <div id="learnLoopStart">
+
+            <label>What do you want to learn?</label>
+
+            <input
+                id="learnLoopTopic"
+                type="text"
+                placeholder="Example: Photosynthesis"
+            >
+
+            <label>Subject</label>
+
+            <input
+                id="learnLoopSubject"
+                type="text"
+                placeholder="Example: Biology"
+            >
+
+            <label>Difficulty</label>
+
+            <select id="learnLoopDifficulty">
+                <option>Beginner</option>
+                <option selected>Intermediate</option>
+                <option>Advanced</option>
+            </select>
+
+            <button
+                class="learnloop-start"
+                onclick="startLearnLoop()"
+            >
+                🚀 Start Learning
+            </button>
+
+        </div>
+
+
+        <!-- LESSON -->
+
+        <div
+            id="learnLoopLessonScreen"
+            style="display:none;"
+        >
+
+            <div
+                id="learnLoopLesson"
+                class="learnloop-lesson"
+            ></div>
+
+            <button
+                class="learnloop-start"
+                onclick="createLearnLoopQuiz()"
+            >
+                🧠 I'm Ready — Quiz Me
+            </button>
+
+        </div>
+
+
+        <!-- QUIZ -->
+
+        <div
+            id="learnLoopQuizScreen"
+            style="display:none;"
+        >
+
+            <div id="learnLoopQuestions"></div>
+
+            <button
+                class="learnloop-start"
+                onclick="submitLearnLoopQuiz()"
+            >
+                🎯 Submit Answers
+            </button>
+
+        </div>
+
+
+        <!-- RESULT -->
+
+        <div
+            id="learnLoopResultScreen"
+            style="display:none;"
+        >
+
+            <div
+                id="learnLoopScore"
+                class="learnloop-score"
+            ></div>
+
+            <div
+                id="learnLoopFeedback"
+                class="learnloop-feedback"
+            ></div>
+
+            <button
+                class="learnloop-start"
+                onclick="nextLearnLoopChallenge()"
+            >
+                🔥 Next Challenge
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
 <script src="ai.js"></script>
 
 </body>
