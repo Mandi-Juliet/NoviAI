@@ -1,13 +1,17 @@
 let currentMode = "Ask";
 
-// =====================================
+
+// ======================================================
 // THINKING INDICATOR
-// =====================================
+// ======================================================
 
 function showThinking(text = "NoviAI is thinking") {
+
     hideThinking();
 
     const chat = document.getElementById("chat");
+
+    if (!chat) return;
 
     const thinking = document.createElement("div");
 
@@ -31,6 +35,7 @@ function showThinking(text = "NoviAI is thinking") {
 
 
 function hideThinking() {
+
     const thinking =
         document.getElementById("thinkingIndicator");
 
@@ -40,31 +45,35 @@ function hideThinking() {
 }
 
 
-// =====================================
+// ======================================================
 // SEND MESSAGE
-// =====================================
+// ======================================================
 
 async function sendMessage() {
 
     const input =
         document.getElementById("messageInput");
 
-    if (!input) return;
+    if (!input) {
+        console.error("messageInput not found.");
+        return;
+    }
 
     const message =
         input.value.trim();
 
     if (!message) return;
 
+
     // Show user's message
     addMessage(message, "user");
 
     input.value = "";
 
-    // =================================
-    // IMAGE REQUEST
-    // =================================
+    input.style.height = "auto";
 
+
+    // Image search
     if (needsImageSearch(message)) {
 
         showThinking("NoviAI is searching");
@@ -77,11 +86,9 @@ async function sendMessage() {
     }
 
 
-    // =================================
-    // NORMAL AI REQUEST
-    // =================================
-
+    // Normal AI request
     showThinking("NoviAI is thinking");
+
 
     try {
 
@@ -101,14 +108,10 @@ async function sendMessage() {
         });
 
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
 
-        console.log(
-            "NoviAI response:",
-            data
-        );
+        console.log("NoviAI response:", data);
 
 
         hideThinking();
@@ -145,10 +148,7 @@ async function sendMessage() {
 
     } catch (error) {
 
-        console.error(
-            "CHAT ERROR:",
-            error
-        );
+        console.error("CHAT ERROR:", error);
 
         hideThinking();
 
@@ -162,9 +162,9 @@ async function sendMessage() {
 }
 
 
-// =====================================
+// ======================================================
 // IMAGE DETECTION
-// =====================================
+// ======================================================
 
 function needsImageSearch(message) {
 
@@ -204,9 +204,9 @@ function needsImageSearch(message) {
 }
 
 
-// =====================================
+// ======================================================
 // IMAGE-ONLY REQUEST
-// =====================================
+// ======================================================
 
 function isImageOnlyRequest(message) {
 
@@ -238,9 +238,9 @@ function isImageOnlyRequest(message) {
 }
 
 
-// =====================================
-// SEARCH IMAGES
-// =====================================
+// ======================================================
+// IMAGE SEARCH
+// ======================================================
 
 async function searchAndShowImages(query) {
 
@@ -249,11 +249,13 @@ async function searchAndShowImages(query) {
         const searchQuery =
             cleanImageQuery(query);
 
+
         const response =
             await fetch(
                 "/image-search?q=" +
                 encodeURIComponent(searchQuery)
             );
+
 
         if (!response.ok) {
 
@@ -263,8 +265,10 @@ async function searchAndShowImages(query) {
 
         }
 
+
         const data =
             await response.json();
+
 
         console.log(
             "Image search:",
@@ -289,6 +293,7 @@ async function searchAndShowImages(query) {
 
 
         hideThinking();
+
 
         displayImages(
             data.results,
@@ -315,14 +320,15 @@ async function searchAndShowImages(query) {
 }
 
 
-// =====================================
+// ======================================================
 // CLEAN IMAGE QUERY
-// =====================================
+// ======================================================
 
 function cleanImageQuery(query) {
 
     let cleaned =
         query.toLowerCase();
+
 
     cleaned = cleaned
         .replace(/show me/gi, "")
@@ -341,8 +347,6 @@ function cleanImageQuery(query) {
         .replace(/diagram of/gi, "")
         .trim();
 
-
-    // Better searches for common school topics
 
     if (cleaned.includes("heart")) {
         return "human heart anatomy labeled diagram";
@@ -376,19 +380,23 @@ function cleanImageQuery(query) {
         return "atomic structure diagram";
     }
 
+
     return cleaned;
 
 }
 
 
-// =====================================
+// ======================================================
 // DISPLAY IMAGES
-// =====================================
+// ======================================================
 
 function displayImages(results, query) {
 
     const chat =
         document.getElementById("chat");
+
+    if (!chat) return;
+
 
     const wrapper =
         document.createElement("div");
@@ -396,11 +404,13 @@ function displayImages(results, query) {
     wrapper.className =
         "message ai";
 
+
     const content =
         document.createElement("div");
 
     content.className =
         "message-content image-results";
+
 
     const heading =
         document.createElement("div");
@@ -411,7 +421,9 @@ function displayImages(results, query) {
     heading.textContent =
         "🔎 Diagrams I found for " + query;
 
+
     content.appendChild(heading);
+
 
     const grid =
         document.createElement("div");
@@ -429,12 +441,14 @@ function displayImages(results, query) {
             card.className =
                 "image-card";
 
+
             const link =
                 document.createElement("a");
 
             link.href =
                 result.original ||
-                result.source;
+                result.source ||
+                "#";
 
             link.target =
                 "_blank";
@@ -473,14 +487,16 @@ function displayImages(results, query) {
                 "image-title";
 
             title.textContent =
-                result.title;
+                result.title ||
+                "Image";
 
 
             const source =
                 document.createElement("a");
 
             source.href =
-                result.source;
+                result.source ||
+                "#";
 
             source.target =
                 "_blank";
@@ -517,6 +533,7 @@ function displayImages(results, query) {
     note.textContent =
         "Images from Wikimedia Commons. Click an image to view its source.";
 
+
     content.appendChild(note);
 
     wrapper.appendChild(content);
@@ -529,9 +546,9 @@ function displayImages(results, query) {
 }
 
 
-// =====================================
-// CLEAN AI RESPONSE FORMATTER
-// =====================================
+// ======================================================
+// FORMAT AI RESPONSE
+// ======================================================
 
 function formatAIResponse(text) {
 
@@ -539,24 +556,21 @@ function formatAIResponse(text) {
         return "";
     }
 
-    let html = String(text);
+
+    let html =
+        String(text);
 
 
-    // =================================
-    // ESCAPE HTML
-    // =================================
-
+    // Escape HTML
     html = html
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
 
-    // =================================
-    // CODE BLOCKS
-    // =================================
-
+    // Code blocks
     const codeBlocks = [];
+
 
     html = html.replace(
         /```([\s\S]*?)```/g,
@@ -565,7 +579,9 @@ function formatAIResponse(text) {
             const index =
                 codeBlocks.length;
 
-            codeBlocks.push(code.trim());
+            codeBlocks.push(
+                code.trim()
+            );
 
             return `___CODE_BLOCK_${index}___`;
 
@@ -573,35 +589,28 @@ function formatAIResponse(text) {
     );
 
 
-    // =================================
-    // INLINE CODE
-    // =================================
-
+    // Inline code
     html = html.replace(
         /`([^`]+)`/g,
         "<code>$1</code>"
     );
 
 
-    // =================================
-    // BOLD + ITALIC
-    // =================================
-
+    // Bold
     html = html.replace(
         /\*\*(.*?)\*\*/g,
         "<strong>$1</strong>"
     );
 
+
+    // Italic
     html = html.replace(
         /(?<!\*)\*([^*\n]+)\*(?!\*)/g,
         "<em>$1</em>"
     );
 
 
-    // =================================
-    // HEADINGS
-    // =================================
-
+    // Headings
     html = html.replace(
         /^###\s+(.*)$/gm,
         "<h4>$1</h4>"
@@ -618,19 +627,11 @@ function formatAIResponse(text) {
     );
 
 
-    // =================================
-    // NUMBERED LISTS
-    // =================================
-
+    // Lists
     html = html.replace(
         /^\s*\d+\.\s+(.*)$/gm,
         "<li>$1</li>"
     );
-
-
-    // =================================
-    // BULLET LISTS
-    // =================================
 
     html = html.replace(
         /^\s*[-*•]\s+(.*)$/gm,
@@ -638,10 +639,7 @@ function formatAIResponse(text) {
     );
 
 
-    // =================================
-    // GROUP LIST ITEMS
-    // =================================
-
+    // Group lists
     html = html.replace(
         /((?:<li>.*?<\/li>\s*)+)/gs,
         function(match) {
@@ -665,10 +663,7 @@ function formatAIResponse(text) {
     );
 
 
-    // =================================
-    // PARAGRAPHS
-    // =================================
-
+    // Paragraphs
     const blocks =
         html.split(/\n\s*\n/);
 
@@ -676,14 +671,14 @@ function formatAIResponse(text) {
     html =
         blocks.map(block => {
 
-            block = block.trim();
+            block =
+                block.trim();
+
 
             if (!block) {
                 return "";
             }
 
-
-            // Don't wrap special blocks
 
             if (
                 block.startsWith("<h2>") ||
@@ -696,8 +691,6 @@ function formatAIResponse(text) {
             }
 
 
-            // Keep single line breaks clean
-
             return `
                 <p>
                     ${block.replace(/\n/g, "<br>")}
@@ -707,15 +700,13 @@ function formatAIResponse(text) {
         }).join("");
 
 
-    // =================================
-    // RESTORE CODE BLOCKS
-    // =================================
-
+    // Restore code blocks
     codeBlocks.forEach(
         function(code, index) {
 
             const formattedCode =
                 escapeCode(code);
+
 
             html = html.replace(
                 `___CODE_BLOCK_${index}___`,
@@ -735,9 +726,9 @@ function formatAIResponse(text) {
 }
 
 
-// =====================================
+// ======================================================
 // ESCAPE CODE
-// =====================================
+// ======================================================
 
 function escapeCode(code) {
 
@@ -749,14 +740,26 @@ function escapeCode(code) {
 }
 
 
-// =====================================
+// ======================================================
 // ADD MESSAGE
-// =====================================
+// ======================================================
 
 function addMessage(text, sender) {
 
     const chat =
         document.getElementById("chat");
+
+    if (!chat) return;
+
+
+    // Remove welcome screen after first message
+    const welcome =
+        chat.querySelector(".welcome");
+
+    if (welcome) {
+        welcome.remove();
+    }
+
 
     const message =
         document.createElement("div");
@@ -771,9 +774,6 @@ function addMessage(text, sender) {
     content.className =
         "message-content";
 
-
-    // Format AI responses
-    // Keep user messages simple
 
     if (sender === "ai") {
 
@@ -793,8 +793,6 @@ function addMessage(text, sender) {
     chat.appendChild(message);
 
 
-    // Smooth scroll
-
     requestAnimationFrame(() => {
 
         chat.scrollTo({
@@ -807,28 +805,37 @@ function addMessage(text, sender) {
 }
 
 
-// =====================================
+// ======================================================
 // SUGGESTION BUTTONS
-// =====================================
+// ======================================================
 
-function useSuggestion(text) {
+function usePrompt(text) {
 
     const input =
         document.getElementById("messageInput");
 
     if (!input) return;
 
+
     input.value =
         text;
 
-    sendMessage();
+    input.focus();
 
 }
 
 
-// =====================================
+// Keep compatibility with your old HTML
+function useSuggestion(text) {
+
+    usePrompt(text);
+
+}
+
+
+// ======================================================
 // ENTER KEY
-// =====================================
+// ======================================================
 
 function handleKey(event) {
 
@@ -846,20 +853,30 @@ function handleKey(event) {
 }
 
 
-// =====================================
+// Compatibility with old HTML
+function handleKeyDown(event) {
+
+    handleKey(event);
+
+}
+
+
+// ======================================================
 // CHANGE MODE
-// =====================================
+// ======================================================
 
 function changeMode(mode) {
 
     currentMode =
         mode;
 
+
     const title =
-        document.getElementById("modeTitle");
+        document.getElementById("pageTitle");
 
     const description =
-        document.getElementById("modeDescription");
+        document.getElementById("pageSubtitle");
+
 
     if (!title || !description) {
         return;
@@ -909,19 +926,70 @@ function changeMode(mode) {
 
     }
 
+
+    // Update active sidebar button
+    document
+        .querySelectorAll(".sidebar-nav .nav-item")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".sidebar-nav .nav-item"
+        );
+
+
+    const modeIndex = {
+        Study: 0,
+        Create: 2,
+        Ask: 3,
+        Support: 4
+    };
+
+
+    const index =
+        modeIndex[mode];
+
+
+    if (
+        index !== undefined &&
+        buttons[index]
+    ) {
+
+        buttons[index]
+            .classList.add("active");
+
+    }
+
 }
 
 
-// =====================================
+// Compatibility with old HTML
+function setMode(mode) {
+
+    changeMode(mode);
+
+}
+
+
+// ======================================================
 // NEW CHAT
-// =====================================
+// ======================================================
 
 function newChat() {
 
     hideThinking();
 
+
     const chat =
         document.getElementById("chat");
+
+    if (!chat) return;
+
 
     chat.innerHTML = `
 
@@ -931,11 +999,50 @@ function newChat() {
                 ✦
             </div>
 
-            <h1>New conversation</h1>
+            <h2>Hello! 👋</h2>
 
             <p>
-                What would you like help with?
+                I'm NoviAI. What can I help you with today?
             </p>
+
+            <div class="quick-actions">
+
+                <button
+                    type="button"
+                    onclick="usePrompt('Explain a topic')"
+                >
+                    📚 Explain a topic
+                </button>
+
+                <button
+                    type="button"
+                    onclick="usePrompt('Create a study plan')"
+                >
+                    📅 Create a study plan
+                </button>
+
+                <button
+                    type="button"
+                    onclick="usePrompt('Write a proposal')"
+                >
+                    📝 Write a proposal
+                </button>
+
+                <button
+                    type="button"
+                    onclick="usePrompt('Talk to me')"
+                >
+                    💙 Talk to me
+                </button>
+
+                <a
+                    href="game.html"
+                    class="game-button"
+                >
+                    🎮 Chase Game
+                </a>
+
+            </div>
 
         </div>
 
@@ -944,9 +1051,9 @@ function newChat() {
 }
 
 
-// =====================================
+// ======================================================
 // HOME
-// =====================================
+// ======================================================
 
 function goHome() {
 
@@ -955,8 +1062,10 @@ function goHome() {
 
 }
 
-/* =========================================
-   NOVIAI LEARNLOOP
+
+// ======================================================
+// LEARNLOOP
+// ======================================================
 
 let learnLoopTopic = "";
 let learnLoopSubject = "";
@@ -965,9 +1074,9 @@ let learnLoopDifficulty = "";
 let learnLoopQuizData = [];
 
 
-/* ===============================
-   OPEN LEARNLOOP
-   =============================== */
+// ------------------------------------------------------
+// OPEN
+// ------------------------------------------------------
 
 function openLearnLoop() {
 
@@ -979,12 +1088,13 @@ function openLearnLoop() {
     modal.classList.add("show");
 
     resetLearnLoop();
+
 }
 
 
-/* ===============================
-   CLOSE LEARNLOOP
-   =============================== */
+// ------------------------------------------------------
+// CLOSE
+// ------------------------------------------------------
 
 function closeLearnLoop() {
 
@@ -994,56 +1104,79 @@ function closeLearnLoop() {
     if (!modal) return;
 
     modal.classList.remove("show");
+
 }
 
 
-/* ===============================
-   RESET
-   =============================== */
+// ------------------------------------------------------
+// RESET
+// ------------------------------------------------------
 
 function resetLearnLoop() {
 
-    document.getElementById(
-        "learnLoopStart"
-    ).style.display = "block";
+    const start =
+        document.getElementById("learnLoopStart");
 
-    document.getElementById(
-        "learnLoopLessonScreen"
-    ).style.display = "none";
+    const lesson =
+        document.getElementById("learnLoopLessonScreen");
 
-    document.getElementById(
-        "learnLoopQuizScreen"
-    ).style.display = "none";
+    const quiz =
+        document.getElementById("learnLoopQuizScreen");
 
-    document.getElementById(
-        "learnLoopResultScreen"
-    ).style.display = "none";
+    const result =
+        document.getElementById("learnLoopResultScreen");
+
+
+    if (start) {
+        start.style.display = "block";
+    }
+
+    if (lesson) {
+        lesson.style.display = "none";
+    }
+
+    if (quiz) {
+        quiz.style.display = "none";
+    }
+
+    if (result) {
+        result.style.display = "none";
+    }
 
 }
 
 
-/* ===============================
-   START LEARNING
-   =============================== */
+// ------------------------------------------------------
+// START LEARNLOOP
+// ------------------------------------------------------
 
 async function startLearnLoop() {
 
+    const topicInput =
+        document.getElementById("learnLoopTopic");
+
+    const subjectInput =
+        document.getElementById("learnLoopSubject");
+
+    const difficultyInput =
+        document.getElementById("learnLoopDifficulty");
+
+
+    if (!topicInput) return;
+
+
     learnLoopTopic =
-        document
-            .getElementById("learnLoopTopic")
-            .value
-            .trim();
+        topicInput.value.trim();
 
     learnLoopSubject =
-        document
-            .getElementById("learnLoopSubject")
-            .value
-            .trim();
+        subjectInput
+            ? subjectInput.value.trim()
+            : "";
 
     learnLoopDifficulty =
-        document
-            .getElementById("learnLoopDifficulty")
-            .value;
+        difficultyInput
+            ? difficultyInput.value
+            : "Intermediate";
 
 
     if (!learnLoopTopic) {
@@ -1056,22 +1189,28 @@ async function startLearnLoop() {
     }
 
 
-    document.getElementById(
-        "learnLoopStart"
-    ).style.display = "none";
+    const start =
+        document.getElementById("learnLoopStart");
 
-    document.getElementById(
-        "learnLoopLessonScreen"
-    ).style.display = "block";
-
+    const lessonScreen =
+        document.getElementById("learnLoopLessonScreen");
 
     const lesson =
-        document.getElementById(
-            "learnLoopLesson"
-        );
+        document.getElementById("learnLoopLesson");
 
-    lesson.innerHTML =
-        "🔄 NoviAI is preparing your lesson...";
+
+    if (start) {
+        start.style.display = "none";
+    }
+
+    if (lessonScreen) {
+        lessonScreen.style.display = "block";
+    }
+
+    if (lesson) {
+        lesson.innerHTML =
+            "🔄 NoviAI is preparing your lesson...";
+    }
 
 
     try {
@@ -1134,10 +1273,14 @@ Do not create quiz questions yet.
         }
 
 
-        lesson.innerHTML =
-            learnLoopFormatText(
-                data.reply || ""
-            );
+        if (lesson) {
+
+            lesson.innerHTML =
+                learnLoopFormatText(
+                    data.reply || ""
+                );
+
+        }
 
 
     } catch (error) {
@@ -1148,17 +1291,21 @@ Do not create quiz questions yet.
         );
 
 
-        lesson.innerHTML =
-            "❌ Sorry, I couldn't prepare the lesson. Please try again.";
+        if (lesson) {
+
+            lesson.innerHTML =
+                "❌ Sorry, I couldn't prepare the lesson. Please try again.";
+
+        }
 
     }
 
 }
 
 
-/* ===============================
-   CREATE QUIZ
-   =============================== */
+// ------------------------------------------------------
+// CREATE QUIZ
+// ------------------------------------------------------
 
 async function createLearnLoopQuiz() {
 
@@ -1167,16 +1314,28 @@ async function createLearnLoopQuiz() {
             "learnLoopQuizScreen"
         );
 
-    document.getElementById(
-        "learnLoopLessonScreen"
-    ).style.display = "none";
+    const lessonScreen =
+        document.getElementById(
+            "learnLoopLessonScreen"
+        );
+
+    const questions =
+        document.getElementById(
+            "learnLoopQuestions"
+        );
+
+
+    if (!quizScreen || !lessonScreen || !questions) {
+        return;
+    }
+
+
+    lessonScreen.style.display = "none";
 
     quizScreen.style.display = "block";
 
 
-    document.getElementById(
-        "learnLoopQuestions"
-    ).innerHTML =
+    questions.innerHTML =
         "<p>🧠 Creating your challenge...</p>";
 
 
@@ -1224,9 +1383,8 @@ Use exactly this structure:
   ]
 }
 
-The "answer" must be the zero-based index of the correct option.
+The answer must be the zero-based index of the correct option.
 
-Example:
 0 = first option
 1 = second option
 2 = third option
@@ -1294,9 +1452,7 @@ Do not include anything outside the JSON.
         );
 
 
-        document.getElementById(
-            "learnLoopQuestions"
-        ).innerHTML = `
+        questions.innerHTML = `
             <p>
                 ❌ I couldn't create the quiz.
                 Please try again.
@@ -1308,9 +1464,9 @@ Do not include anything outside the JSON.
 }
 
 
-/* ===============================
-   PARSE JSON
-   =============================== */
+// ------------------------------------------------------
+// PARSE QUIZ JSON
+// ------------------------------------------------------
 
 function parseLearnLoopJSON(raw) {
 
@@ -1327,23 +1483,25 @@ function parseLearnLoopJSON(raw) {
                 .trim();
 
         return JSON.parse(cleaned);
+
     }
 
 }
 
 
-/* ===============================
-   DISPLAY QUIZ
-   =============================== */
+// ------------------------------------------------------
+// DISPLAY QUIZ
+// ------------------------------------------------------
 
-function renderLearnLoopQuiz(
-    questions
-) {
+function renderLearnLoopQuiz(questions) {
 
     const container =
         document.getElementById(
             "learnLoopQuestions"
         );
+
+
+    if (!container) return;
 
 
     container.innerHTML = "";
@@ -1385,7 +1543,8 @@ function renderLearnLoopQuiz(
                     const input =
                         document.createElement("input");
 
-                    input.type = "radio";
+                    input.type =
+                        "radio";
 
                     input.name =
                         `learnloop-question-${questionIndex}`;
@@ -1395,6 +1554,7 @@ function renderLearnLoopQuiz(
 
 
                     label.appendChild(input);
+
 
                     label.appendChild(
                         document.createTextNode(
@@ -1419,9 +1579,9 @@ function renderLearnLoopQuiz(
 }
 
 
-/* ===============================
-   SCORE QUIZ
-   =============================== */
+// ------------------------------------------------------
+// SUBMIT QUIZ
+// ------------------------------------------------------
 
 function submitLearnLoopQuiz() {
 
@@ -1495,20 +1655,38 @@ function submitLearnLoopQuiz() {
         );
 
 
-    document.getElementById(
-        "learnLoopQuizScreen"
-    ).style.display = "none";
+    const quizScreen =
+        document.getElementById(
+            "learnLoopQuizScreen"
+        );
+
+    const resultScreen =
+        document.getElementById(
+            "learnLoopResultScreen"
+        );
 
 
-    document.getElementById(
-        "learnLoopResultScreen"
-    ).style.display = "block";
+    if (quizScreen) {
+        quizScreen.style.display = "none";
+    }
+
+    if (resultScreen) {
+        resultScreen.style.display = "block";
+    }
 
 
-    document.getElementById(
-        "learnLoopScore"
-    ).textContent =
-        `🎯 ${score}/5 — ${percentage}%`;
+    const scoreElement =
+        document.getElementById(
+            "learnLoopScore"
+        );
+
+
+    if (scoreElement) {
+
+        scoreElement.textContent =
+            `🎯 ${score}/5 — ${percentage}%`;
+
+    }
 
 
     let feedback = "";
@@ -1519,17 +1697,23 @@ function submitLearnLoopQuiz() {
         feedback =
             "🏆 Excellent! You mastered this challenge.";
 
-    } else if (percentage >= 80) {
+    }
+
+    else if (percentage >= 80) {
 
         feedback =
             "🌟 Great work! You understand this topic very well.";
 
-    } else if (percentage >= 60) {
+    }
+
+    else if (percentage >= 60) {
 
         feedback =
             "👍 Good progress. A little more revision will strengthen your understanding.";
 
-    } else {
+    }
+
+    else {
 
         feedback =
             "📚 Keep practising. Review the lesson and try another challenge.";
@@ -1537,87 +1721,99 @@ function submitLearnLoopQuiz() {
     }
 
 
-    document.getElementById(
-        "learnLoopFeedback"
-    ).innerHTML = `
+    const feedbackElement =
+        document.getElementById(
+            "learnLoopFeedback"
+        );
 
-        <strong>Topic:</strong>
-        ${learnLoopTopic}
 
-        <br><br>
+    if (feedbackElement) {
 
-        ${feedback}
+        feedbackElement.innerHTML = `
 
-        <br><br>
+            <strong>Topic:</strong>
+            ${escapeHTML(learnLoopTopic)}
 
-        <strong>Your next step:</strong>
-        Try the challenge again or revise the lesson before continuing.
+            <br><br>
 
-    `;
+            ${feedback}
+
+            <br><br>
+
+            <strong>Your next step:</strong>
+            Try the challenge again or revise the lesson before continuing.
+
+        `;
+
+    }
 
 }
 
 
-/* ===============================
-   NEXT CHALLENGE
-   =============================== */
+// ------------------------------------------------------
+// NEXT CHALLENGE
+// ------------------------------------------------------
 
 function nextLearnLoopChallenge() {
 
-    document.getElementById(
-        "learnLoopResultScreen"
-    ).style.display = "none";
+    resetLearnLoop();
 
 
-    document.getElementById(
-        "learnLoopQuizScreen"
-    ).style.display = "none";
+    const topic =
+        document.getElementById(
+            "learnLoopTopic"
+        );
 
 
-    document.getElementById(
-        "learnLoopLessonScreen"
-    ).style.display = "none";
+    if (topic) {
 
+        topic.value =
+            learnLoopTopic;
 
-    document.getElementById(
-        "learnLoopStart"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "learnLoopTopic"
-    ).value =
-        learnLoopTopic;
+    }
 
 }
 
 
-/* ===============================
-   FORMAT LESSON
-   =============================== */
+// ------------------------------------------------------
+// LEARNLOOP TEXT FORMAT
+// ------------------------------------------------------
 
 function learnLoopFormatText(text) {
 
-    const safe =
-        String(text)
-
-            .replace(/&/g, "&amp;")
-
-            .replace(/</g, "&lt;")
-
-            .replace(/>/g, "&gt;");
-
-
-    return safe
-
+    return escapeHTML(text)
         .replace(
             /\*\*(.*?)\*\*/g,
             "<strong>$1</strong>"
         )
-
         .replace(
             /\n/g,
             "<br>"
         );
 
+}
 
+
+// ======================================================
+// ESCAPE HTML
+// ======================================================
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+// ======================================================
+// STARTUP CHECK
+// ======================================================
+
+console.log(
+    "✅ NoviAI ai.js loaded successfully."
+);
