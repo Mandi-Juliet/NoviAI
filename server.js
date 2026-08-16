@@ -14,12 +14,39 @@ const ai = new GoogleGenAI({
 });
 
 // =====================================
+// NOVIAI SERVICE STATUS
+// =====================================
+
+let serviceUnavailableUntil = null;
+
+function getRetryTime() {
+
+    const now = new Date();
+
+    // Try again after 10 minutes
+    const retryTime = new Date(
+        now.getTime() + 10 * 60 * 1000
+    );
+
+    return retryTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
+
+// =====================================
 // HOME
 // =====================================
 
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
+
+    res.sendFile(
+        __dirname + "/index.html"
+    );
+
 });
+
 
 // =====================================
 // AI CHAT
@@ -27,14 +54,60 @@ app.get("/", (req, res) => {
 
 app.post("/chat", async (req, res) => {
 
-    const message = req.body.message;
-    const mode = req.body.mode || "Ask";
+    const message =
+        req.body.message;
+
+    const mode =
+        req.body.mode || "Ask";
+
+
+    // ---------------------------------
+    // CHECK MESSAGE
+    // ---------------------------------
 
     if (!message) {
+
         return res.status(400).json({
-            error: "No message provided."
+
+            error:
+                "Please enter a message."
+
         });
+
     }
+
+
+    // ---------------------------------
+    // CHECK TEMPORARY SERVICE STATUS
+    // ---------------------------------
+
+    if (
+        serviceUnavailableUntil &&
+        Date.now() < serviceUnavailableUntil
+    ) {
+
+        const retryTime =
+            new Date(
+                serviceUnavailableUntil
+            ).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+
+
+        return res.status(503).json({
+
+            error:
+                `Today's NoviAI session is temporarily unavailable. Please try again around ${retryTime}.`
+
+        });
+
+    }
+
+
+    // =================================
+    // NOVIAI INSTRUCTIONS
+    // =================================
 
     const instruction = `
 
@@ -172,7 +245,7 @@ Example:
 
 x = 5
 
-**Answer: x = 5**
+Answer: x = 5
 
 ========================
 EDUCATION
@@ -220,7 +293,7 @@ If the mode is "Support":
 
 Be warm, patient and conversational.
 
-Listen to what the user says and respond to it rather than immediately giving a large list of suggestions.
+Listen to what the user says rather than immediately giving a large list of suggestions.
 
 ========================
 CREATOR
@@ -246,47 +319,190 @@ Do not use excessive emojis.
 
 Do not use decorative symbols to make ordinary answers look complicated.
 
-Do not end every response with "Let me know if you need anything else."
+Do not end every response with:
+
+"Let me know if you need anything else."
 
 Answer the user's message naturally.
 
-User's message:
+========================
+USER MESSAGE
+========================
 
 ${message}
 
 `;
 
+
+    // =================================
+    // CALL GEMINI
+    // =================================
+
     try {
 
-        console.log("AI REQUEST:", message);
+        console.log(
+            "AI REQUEST:",
+            message
+        );
 
-        const response = await ai.models.generateContent({
-            model: "gemini-3.5-flash",
-            contents: instruction
-        });
 
-        const reply = response.text;
+        const response =
+            await ai.models.generateContent({
 
-        console.log("AI RESPONSE RECEIVED");
+                model:
+                    "gemini-2.5-flash",
 
-        res.json({
+                contents:
+                    instruction
+
+            });
+
+
+        const reply =
+            response.text;
+
+
+        // ---------------------------------
+        // CHECK RESPONSE
+        // ---------------------------------
+
+        if (!reply) {
+
+            throw new Error(
+                "Gemini returned an empty response."
+            );
+
+        }
+
+
+        console.log(
+            "AI RESPONSE RECEIVED"
+        );
+
+
+        // Service is working again
+        serviceUnavailableUntil = null;
+
+
+        return res.json({
+
             reply: reply
+
         });
+
 
     } catch (error) {
 
-        console.error("AI ERROR:", error);
+        console.error(
+            "=============================="
+        );
 
-        res.status(500).json({
-            error: "NoviAI's AI service returned an error. Check the Command Prompt for the details."
+        console.error(
+            "NOVIAI AI ERROR"
+        );
+
+        console.error(
+            error
+        );
+
+        console.error(
+            "=============================="
+        );
+
+
+        const errorText =
+            String(
+                error?.message ||
+                error
+            ).toLowerCase();
+
+
+        // =================================
+        // TEMPORARY SERVICE ERRORS
+        // =================================
+
+        const temporaryError =
+            errorText.includes("429") ||
+            errorText.includes("quota") ||
+            errorText.includes("rate limit") ||
+            errorText.includes("503") ||
+            errorText.includes("overloaded") ||
+            errorText.includes("unavailable") ||
+            errorText.includes("resource exhausted");
+
+
+        if (temporaryError) {
+
+            // Keep NoviAI unavailable
+            // for 10 minutes
+
+            serviceUnavailableUntil =
+                Date.now() +
+                10 * 60 * 1000;
+
+
+            const retryTime =
+                getRetryTime();
+
+
+            return res.status(503).json({
+
+                error:
+                    `Today's NoviAI session is temporarily unavailable. It should be available again around ${retryTime}.`
+
+            });
+
+        }
+
+
+        // =================================
+        // MODEL / API / KEY ERRORS
+        // =================================
+
+        if (
+            errorText.includes("api key") ||
+            errorText.includes("401") ||
+            errorText.includes("403") ||
+            errorText.includes("authentication")
+        ) {
+
+            return res.status(500).json({
+
+                error:
+                    "NoviAI cannot connect to its AI service right now. Please check the Gemini API key in the server settings."
+
+            });
+
+        }
+
+
+        // =================================
+        // GENERAL ERROR
+        // =================================
+
+        return res.status(500).json({
+
+            error:
+                "NoviAI is temporarily unable to answer right now. Please try again shortly."
+
         });
+
     }
+
 });
+
 
 // =====================================
 // START SERVER
 // =====================================
 
-app.listen(PORT, () => {
-    console.log(`NoviAI server running at http://localhost:${PORT}`);
-});
+app.listen(
+    PORT,
+    () => {
+
+        console.log(
+            `NoviAI server running at http://localhost:${PORT}`
+        );
+
+    }
+);
