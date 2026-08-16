@@ -954,3 +954,673 @@ function goHome() {
         "index.html";
 
 }
+
+````javascript
+/* =========================================
+   NOVIAI LEARNLOOP
+   ========================================= */
+
+let learnLoopTopic = "";
+let learnLoopSubject = "";
+let learnLoopDifficulty = "";
+
+let learnLoopQuizData = [];
+
+
+/* ===============================
+   OPEN LEARNLOOP
+   =============================== */
+
+function openLearnLoop() {
+
+    const modal =
+        document.getElementById("learnLoopModal");
+
+    if (!modal) return;
+
+    modal.classList.add("show");
+
+    resetLearnLoop();
+}
+
+
+/* ===============================
+   CLOSE LEARNLOOP
+   =============================== */
+
+function closeLearnLoop() {
+
+    const modal =
+        document.getElementById("learnLoopModal");
+
+    if (!modal) return;
+
+    modal.classList.remove("show");
+}
+
+
+/* ===============================
+   RESET
+   =============================== */
+
+function resetLearnLoop() {
+
+    document.getElementById(
+        "learnLoopStart"
+    ).style.display = "block";
+
+    document.getElementById(
+        "learnLoopLessonScreen"
+    ).style.display = "none";
+
+    document.getElementById(
+        "learnLoopQuizScreen"
+    ).style.display = "none";
+
+    document.getElementById(
+        "learnLoopResultScreen"
+    ).style.display = "none";
+
+}
+
+
+/* ===============================
+   START LEARNING
+   =============================== */
+
+async function startLearnLoop() {
+
+    learnLoopTopic =
+        document
+            .getElementById("learnLoopTopic")
+            .value
+            .trim();
+
+    learnLoopSubject =
+        document
+            .getElementById("learnLoopSubject")
+            .value
+            .trim();
+
+    learnLoopDifficulty =
+        document
+            .getElementById("learnLoopDifficulty")
+            .value;
+
+
+    if (!learnLoopTopic) {
+
+        alert(
+            "Please enter a topic you want to learn."
+        );
+
+        return;
+    }
+
+
+    document.getElementById(
+        "learnLoopStart"
+    ).style.display = "none";
+
+    document.getElementById(
+        "learnLoopLessonScreen"
+    ).style.display = "block";
+
+
+    const lesson =
+        document.getElementById(
+            "learnLoopLesson"
+        );
+
+    lesson.innerHTML =
+        "🔄 NoviAI is preparing your lesson...";
+
+
+    try {
+
+        const response =
+            await fetch("/chat", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    message: `
+You are NoviAI LearnLoop.
+
+Teach a student this topic:
+
+Subject: ${learnLoopSubject}
+
+Topic: ${learnLoopTopic}
+
+Difficulty: ${learnLoopDifficulty}
+
+Give a clear lesson suitable for the selected difficulty.
+
+Use these sections:
+
+WHAT IT MEANS
+KEY IDEAS
+SIMPLE EXAMPLE
+IMPORTANT THINGS TO REMEMBER
+
+Keep it educational and easy to understand.
+
+Do not create quiz questions yet.
+`,
+
+                    mode: "Study"
+
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Lesson request failed."
+            );
+
+        }
+
+
+        lesson.innerHTML =
+            learnLoopFormatText(
+                data.reply || ""
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "LearnLoop lesson error:",
+            error
+        );
+
+
+        lesson.innerHTML =
+            "❌ Sorry, I couldn't prepare the lesson. Please try again.";
+
+    }
+
+}
+
+
+/* ===============================
+   CREATE QUIZ
+   =============================== */
+
+async function createLearnLoopQuiz() {
+
+    const quizScreen =
+        document.getElementById(
+            "learnLoopQuizScreen"
+        );
+
+    document.getElementById(
+        "learnLoopLessonScreen"
+    ).style.display = "none";
+
+    quizScreen.style.display = "block";
+
+
+    document.getElementById(
+        "learnLoopQuestions"
+    ).innerHTML =
+        "<p>🧠 Creating your challenge...</p>";
+
+
+    try {
+
+        const response =
+            await fetch("/chat", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    message: `
+Create a quiz for NoviAI LearnLoop.
+
+Subject: ${learnLoopSubject}
+
+Topic: ${learnLoopTopic}
+
+Difficulty: ${learnLoopDifficulty}
+
+Create EXACTLY 5 multiple-choice questions.
+
+Return ONLY valid JSON.
+
+Use exactly this structure:
+
+{
+  "questions": [
+    {
+      "question": "Question text",
+      "options": [
+        "Option A",
+        "Option B",
+        "Option C",
+        "Option D"
+      ],
+      "answer": 0
+    }
+  ]
+}
+
+The "answer" must be the zero-based index of the correct option.
+
+Example:
+0 = first option
+1 = second option
+2 = third option
+3 = fourth option
+
+Do not include markdown.
+Do not include explanations.
+Do not include anything outside the JSON.
+`,
+
+                    mode: "Study"
+
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Quiz request failed."
+            );
+
+        }
+
+
+        const raw =
+            (data.reply || "").trim();
+
+
+        learnLoopQuizData =
+            parseLearnLoopJSON(raw);
+
+
+        if (
+            !learnLoopQuizData ||
+            !Array.isArray(
+                learnLoopQuizData.questions
+            ) ||
+            learnLoopQuizData.questions.length !== 5
+        ) {
+
+            throw new Error(
+                "Invalid quiz format."
+            );
+
+        }
+
+
+        renderLearnLoopQuiz(
+            learnLoopQuizData.questions
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "LearnLoop quiz error:",
+            error
+        );
+
+
+        document.getElementById(
+            "learnLoopQuestions"
+        ).innerHTML = `
+            <p>
+                ❌ I couldn't create the quiz.
+                Please try again.
+            </p>
+        `;
+
+    }
+
+}
+
+
+/* ===============================
+   PARSE JSON
+   =============================== */
+
+function parseLearnLoopJSON(raw) {
+
+    try {
+
+        return JSON.parse(raw);
+
+    } catch (error) {
+
+        const cleaned =
+            raw
+                .replace(/```json/gi, "")
+                .replace(/```/g, "")
+                .trim();
+
+        return JSON.parse(cleaned);
+    }
+
+}
+
+
+/* ===============================
+   DISPLAY QUIZ
+   =============================== */
+
+function renderLearnLoopQuiz(
+    questions
+) {
+
+    const container =
+        document.getElementById(
+            "learnLoopQuestions"
+        );
+
+
+    container.innerHTML = "";
+
+
+    questions.forEach(
+        (question, questionIndex) => {
+
+            const questionBox =
+                document.createElement("div");
+
+            questionBox.className =
+                "learnloop-question";
+
+
+            const title =
+                document.createElement("div");
+
+            title.className =
+                "learnloop-question-title";
+
+            title.textContent =
+                `${questionIndex + 1}. ${question.question}`;
+
+
+            questionBox.appendChild(title);
+
+
+            question.options.forEach(
+                (option, optionIndex) => {
+
+                    const label =
+                        document.createElement("label");
+
+                    label.className =
+                        "learnloop-option";
+
+
+                    const input =
+                        document.createElement("input");
+
+                    input.type = "radio";
+
+                    input.name =
+                        `learnloop-question-${questionIndex}`;
+
+                    input.value =
+                        optionIndex;
+
+
+                    label.appendChild(input);
+
+                    label.appendChild(
+                        document.createTextNode(
+                            ` ${String.fromCharCode(65 + optionIndex)}. ${option}`
+                        )
+                    );
+
+
+                    questionBox.appendChild(label);
+
+                }
+            );
+
+
+            container.appendChild(
+                questionBox
+            );
+
+        }
+    );
+
+}
+
+
+/* ===============================
+   SCORE QUIZ
+   =============================== */
+
+function submitLearnLoopQuiz() {
+
+    if (
+        !learnLoopQuizData ||
+        !Array.isArray(
+            learnLoopQuizData.questions
+        )
+    ) {
+
+        alert(
+            "There is no quiz to score yet."
+        );
+
+        return;
+    }
+
+
+    let score = 0;
+
+    let answered = 0;
+
+
+    learnLoopQuizData.questions.forEach(
+        (question, index) => {
+
+            const selected =
+                document.querySelector(
+                    `input[name="learnloop-question-${index}"]:checked`
+                );
+
+
+            if (selected) {
+
+                answered++;
+
+
+                if (
+                    Number(selected.value) ===
+                    Number(question.answer)
+                ) {
+
+                    score++;
+
+                }
+
+            }
+
+        }
+    );
+
+
+    if (
+        answered !==
+        learnLoopQuizData.questions.length
+    ) {
+
+        alert(
+            "Please answer all 5 questions before submitting."
+        );
+
+        return;
+    }
+
+
+    const percentage =
+        Math.round(
+            (score /
+                learnLoopQuizData.questions.length) *
+            100
+        );
+
+
+    document.getElementById(
+        "learnLoopQuizScreen"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "learnLoopResultScreen"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "learnLoopScore"
+    ).textContent =
+        `🎯 ${score}/5 — ${percentage}%`;
+
+
+    let feedback = "";
+
+
+    if (percentage === 100) {
+
+        feedback =
+            "🏆 Excellent! You mastered this challenge.";
+
+    } else if (percentage >= 80) {
+
+        feedback =
+            "🌟 Great work! You understand this topic very well.";
+
+    } else if (percentage >= 60) {
+
+        feedback =
+            "👍 Good progress. A little more revision will strengthen your understanding.";
+
+    } else {
+
+        feedback =
+            "📚 Keep practising. Review the lesson and try another challenge.";
+
+    }
+
+
+    document.getElementById(
+        "learnLoopFeedback"
+    ).innerHTML = `
+
+        <strong>Topic:</strong>
+        ${learnLoopTopic}
+
+        <br><br>
+
+        ${feedback}
+
+        <br><br>
+
+        <strong>Your next step:</strong>
+        Try the challenge again or revise the lesson before continuing.
+
+    `;
+
+}
+
+
+/* ===============================
+   NEXT CHALLENGE
+   =============================== */
+
+function nextLearnLoopChallenge() {
+
+    document.getElementById(
+        "learnLoopResultScreen"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "learnLoopQuizScreen"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "learnLoopLessonScreen"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "learnLoopStart"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "learnLoopTopic"
+    ).value =
+        learnLoopTopic;
+
+}
+
+
+/* ===============================
+   FORMAT LESSON
+   =============================== */
+
+function learnLoopFormatText(text) {
+
+    const safe =
+        String(text)
+
+            .replace(/&/g, "&amp;")
+
+            .replace(/</g, "&lt;")
+
+            .replace(/>/g, "&gt;");
+
+
+    return safe
+
+        .replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        )
+
+        .replace(
+            /\n/g,
+            "<br>"
+        );
+
+}
+````
