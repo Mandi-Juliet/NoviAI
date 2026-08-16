@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no">
 
     <title>NoviAI Chase</title>
 
@@ -12,108 +13,164 @@
 
 <body>
 
-<div class="game">
+<div id="game">
 
-    <!-- TOP HUD -->
-    <div class="hud">
+    <!-- CITY -->
+    <div class="sky">
+        <div class="moon">✦</div>
 
-        <div class="hud-left">
+        <div class="city city-back">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+        </div>
 
-            <div class="hud-box">
-                ⭐ <span id="score">0</span>
-            </div>
+        <div class="city city-front">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span>
+        </div>
+    </div>
 
-            <div class="hud-box">
-                🪙 <span id="coins">0</span>
-            </div>
+    <!-- ROAD -->
+    <div class="road">
 
+        <div class="road-line left-line"></div>
+        <div class="road-line right-line"></div>
+
+        <div class="lane-line lane-one"></div>
+        <div class="lane-line lane-two"></div>
+
+        <div class="road-dashes">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+        </div>
+
+    </div>
+
+    <!-- GAME OBJECTS -->
+    <div id="objects"></div>
+
+    <!-- HEADER -->
+    <header class="game-header">
+
+        <div class="stat">
+            <span>⭐</span>
+            <strong id="score">0</strong>
         </div>
 
         <div class="game-title">
             ✦ NoviAI Chase
         </div>
 
-        <div class="hud-right">
+        <div class="lives" id="lives">
+            ❤️ ❤️ ❤️
+        </div>
 
-            <div class="hearts">
-                ❤️ ❤️ ❤️
+    </header>
+
+    <!-- PLAYER -->
+    <div id="player">
+
+        <div class="hair"></div>
+
+        <div class="head">
+            <div class="eye left-eye"></div>
+            <div class="eye right-eye"></div>
+            <div class="mouth"></div>
+        </div>
+
+        <div class="headphones">
+            <span class="ear left-ear"></span>
+            <span class="ear right-ear"></span>
+            <span class="band"></span>
+        </div>
+
+        <div class="body">
+            <div class="shirt-star">✦</div>
+        </div>
+
+        <div class="arm left-arm"></div>
+        <div class="arm right-arm"></div>
+
+        <div class="leg left-leg"></div>
+        <div class="leg right-leg"></div>
+
+        <div class="shoe left-shoe"></div>
+        <div class="shoe right-shoe"></div>
+
+    </div>
+
+    <!-- START SCREEN -->
+    <div id="startScreen" class="overlay">
+
+        <div class="panel">
+
+            <div class="big-logo">✦</div>
+
+            <h1>NoviAI Chase</h1>
+
+            <p>
+                Run through the neon city,<br>
+                collect stars and dodge obstacles!
+            </p>
+
+            <button id="startButton">
+                ▶ START GAME
+            </button>
+
+            <div class="instructions">
+                <span>← →</span> Move
+                <span>↑</span> Jump
+                <span>↓</span> Slide
             </div>
 
         </div>
 
     </div>
 
-
-    <!-- GAME CANVAS -->
-    <canvas id="gameCanvas"></canvas>
-
-
-    <!-- START SCREEN -->
-    <div id="startScreen" class="overlay">
-
-        <div class="logo-big">
-            ✦
-        </div>
-
-        <h1>NoviAI Chase</h1>
-
-        <p>
-            Run • Dodge • Collect • Survive
-        </p>
-
-        <button id="startBtn">
-            ▶ START GAME
-        </button>
-
-        <div class="instructions">
-            <div>⬅️ ➡️ Move</div>
-            <div>⬆️ Jump</div>
-            <div>⬇️ Slide</div>
-        </div>
-
-    </div>
-
-
     <!-- GAME OVER -->
-    <div id="gameOverScreen" class="overlay hidden">
+    <div id="gameOver" class="overlay hidden">
 
-        <div class="game-over-icon">
-            💥
+        <div class="panel">
+
+            <div class="big-logo">💥</div>
+
+            <h1>Game Over</h1>
+
+            <p>Your score</p>
+
+            <div class="final-score" id="finalScore">
+                0
+            </div>
+
+            <button id="restartButton">
+                ↻ PLAY AGAIN
+            </button>
+
+            <button class="home-button"
+                    onclick="window.location.href='ai.html'">
+                ✦ BACK TO NOVIAI
+            </button>
+
         </div>
-
-        <h1>Game Over</h1>
-
-        <p>Your Score</p>
-
-        <div id="finalScore">
-            0
-        </div>
-
-        <button id="restartBtn">
-            🔄 PLAY AGAIN
-        </button>
 
     </div>
-
 
     <!-- MOBILE CONTROLS -->
     <div class="controls">
 
-        <button id="leftBtn">
-            ◀
-        </button>
+        <button data-action="left">◀</button>
 
-        <button id="jumpBtn">
-            ▲
-        </button>
+        <button data-action="jump">▲</button>
 
-        <button id="slideBtn">
-            ▼
-        </button>
+        <button data-action="slide">▼</button>
 
-        <button id="rightBtn">
-            ▶
-        </button>
+        <button data-action="right">▶</button>
 
     </div>
 
@@ -123,3 +180,4 @@
 
 </body>
 </html>
+```
