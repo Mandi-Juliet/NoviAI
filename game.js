@@ -1,9 +1,13 @@
-```javascript
+// ============================================
+// NOVIAI RUN
+// ============================================
+
+const game = document.getElementById("game");
 const player = document.getElementById("player");
 const objects = document.getElementById("objects");
 
-const scoreDisplay = document.getElementById("score");
-const livesDisplay = document.getElementById("lives");
+const scoreElement = document.getElementById("score");
+const finalScoreElement = document.getElementById("finalScore");
 
 const startScreen = document.getElementById("startScreen");
 const gameOverScreen = document.getElementById("gameOver");
@@ -11,305 +15,56 @@ const gameOverScreen = document.getElementById("gameOver");
 const startButton = document.getElementById("startButton");
 const restartButton = document.getElementById("restartButton");
 
-const finalScore = document.getElementById("finalScore");
+const leftButton = document.getElementById("leftButton");
+const rightButton = document.getElementById("rightButton");
+const jumpButton = document.getElementById("jumpButton");
+const slideButton = document.getElementById("slideButton");
+
+
+// ============================================
+// GAME VARIABLES
+// ============================================
 
 let running = false;
 
 let score = 0;
+
 let lives = 3;
 
 let lane = 1;
 
-let speed = 5;
+let speed = 6;
+
+let gameTime = 0;
+
 let spawnTimer = 0;
 
-let jumpTimer = 0;
-let slideTimer = 0;
+let animationFrame;
 
-let objectsArray = [];
 
-const lanePositions = ["25%", "50%", "75%"];
+// LANE POSITIONS
 
-/* =========================
-   START
-========================= */
+const lanes = [
+    28,
+    50,
+    72
+];
 
-startButton.addEventListener("click", startGame);
-restartButton.addEventListener("click", startGame);
 
-function startGame() {
+// ============================================
+// PLAYER POSITION
+// ============================================
 
-    score = 0;
-    lives = 3;
+function updatePlayerLane() {
 
-    speed = 5;
-    spawnTimer = 0;
+    player.style.left = lanes[lane] + "%";
 
-    lane = 1;
-
-    jumpTimer = 0;
-    slideTimer = 0;
-
-    objects.innerHTML = "";
-
-    objectsArray = [];
-
-    updateUI();
-
-    player.style.left = lanePositions[lane];
-
-    startScreen.classList.add("hidden");
-    gameOverScreen.classList.add("hidden");
-
-    running = true;
-
-    requestAnimationFrame(gameLoop);
 }
 
-/* =========================
-   GAME LOOP
-========================= */
 
-let lastTime = 0;
-
-function gameLoop(time) {
-
-    if (!running) return;
-
-    if (!lastTime) {
-        lastTime = time;
-    }
-
-    const delta = time - lastTime;
-    lastTime = time;
-
-    updateGame(delta);
-
-    requestAnimationFrame(gameLoop);
-}
-
-/* =========================
-   UPDATE
-========================= */
-
-function updateGame(delta) {
-
-    spawnTimer += delta;
-
-    if (spawnTimer > Math.max(450, 900 - score * 2)) {
-
-        spawnTimer = 0;
-
-        spawnObject();
-    }
-
-    moveObjects(delta);
-
-    updatePlayer();
-
-    score += delta * 0.002;
-
-    scoreDisplay.textContent = Math.floor(score);
-
-    /*
-        Gradually increase difficulty.
-    */
-    speed = Math.min(
-        13,
-        5 + score / 120
-    );
-}
-
-/* =========================
-   SPAWN
-========================= */
-
-function spawnObject() {
-
-    const type = Math.random() < 0.62
-        ? "coin"
-        : "obstacle";
-
-    const object = document.createElement("div");
-
-    object.className = type;
-
-    const randomLane =
-        Math.floor(Math.random() * 3);
-
-    object.dataset.lane = randomLane;
-
-    object.dataset.depth = 0;
-
-    if (type === "coin") {
-        object.textContent = "★";
-    }
-
-    objects.appendChild(object);
-
-    objectsArray.push({
-        element: object,
-        lane: randomLane,
-        depth: 0,
-        type: type
-    });
-}
-
-/* =========================
-   MOVE OBJECTS
-========================= */
-
-function moveObjects(delta) {
-
-    const multiplier =
-        delta / 16.67;
-
-    for (let i = objectsArray.length - 1; i >= 0; i--) {
-
-        const obj = objectsArray[i];
-
-        obj.depth += speed * multiplier;
-
-        /*
-            Perspective movement.
-            Objects begin small near horizon
-            and become larger toward player.
-        */
-
-        const progress =
-            obj.depth / 1000;
-
-        const scale =
-            0.25 + progress * 2.5;
-
-        const x =
-            getLaneX(obj.lane, progress);
-
-        const y =
-            35 + progress * 70;
-
-        obj.element.style.left = x + "%";
-        obj.element.style.top = y + "%";
-
-        obj.element.style.transform =
-            `translate(-50%, -50%) scale(${scale})`;
-
-        /*
-            Collision zone.
-        */
-
-        if (obj.depth > 800) {
-
-            if (
-                obj.lane === lane &&
-                !isJumping() &&
-                !isSliding()
-            ) {
-
-                if (obj.type === "coin") {
-
-                    collectCoin(i);
-
-                    continue;
-
-                } else {
-
-                    hitObstacle(i);
-
-                    continue;
-                }
-            }
-        }
-
-        /*
-            Remove objects after passing player.
-        */
-
-        if (obj.depth > 1100) {
-
-            obj.element.remove();
-
-            objectsArray.splice(i, 1);
-        }
-    }
-}
-
-/* =========================
-   LANE POSITION
-========================= */
-
-function getLaneX(laneNumber, progress) {
-
-    const center = 50;
-
-    const spread = 28 + progress * 15;
-
-    if (laneNumber === 0) {
-        return center - spread;
-    }
-
-    if (laneNumber === 2) {
-        return center + spread;
-    }
-
-    return center;
-}
-
-/* =========================
-   COIN
-========================= */
-
-function collectCoin(index) {
-
-    score += 15;
-
-    const obj =
-        objectsArray[index];
-
-    obj.element.remove();
-
-    objectsArray.splice(index, 1);
-}
-
-/* =========================
-   OBSTACLE
-========================= */
-
-function hitObstacle(index) {
-
-    lives--;
-
-    updateUI();
-
-    const obj =
-        objectsArray[index];
-
-    obj.element.remove();
-
-    objectsArray.splice(index, 1);
-
-    /*
-        Flash player.
-    */
-
-    player.style.filter =
-        "brightness(2)";
-
-    setTimeout(() => {
-
-        player.style.filter = "";
-
-    }, 180);
-
-    if (lives <= 0) {
-
-        endGame();
-    }
-}
-
-/* =========================
-   PLAYER MOVEMENT
-========================= */
+// ============================================
+// MOVE LEFT
+// ============================================
 
 function moveLeft() {
 
@@ -319,10 +74,16 @@ function moveLeft() {
 
         lane--;
 
-        player.style.left =
-            lanePositions[lane];
+        updatePlayerLane();
+
     }
+
 }
+
+
+// ============================================
+// MOVE RIGHT
+// ============================================
 
 function moveRight() {
 
@@ -332,209 +93,568 @@ function moveRight() {
 
         lane++;
 
-        player.style.left =
-            lanePositions[lane];
+        updatePlayerLane();
+
     }
+
 }
 
-/* =========================
-   JUMP
-========================= */
+
+// ============================================
+// JUMP
+// ============================================
 
 function jump() {
 
     if (!running) return;
 
-    if (jumpTimer > 0) return;
+    if (player.classList.contains("jumping")) return;
 
-    jumpTimer = 550;
+    player.classList.add("jumping");
 
-    player.style.transition =
-        "transform .18s ease";
-
-    player.style.transform =
-        "translateX(-50%) translateY(-105px) scale(1.08)";
+    player.style.bottom = "28%";
 
     setTimeout(() => {
 
-        if (!running) return;
+        player.style.bottom = "10%";
 
-        player.style.transform =
-            "translateX(-50%)";
+    }, 420);
 
-    }, 550);
+    setTimeout(() => {
+
+        player.classList.remove("jumping");
+
+    }, 500);
+
 }
 
-function isJumping() {
 
-    return jumpTimer > 0;
-}
-
-/* =========================
-   SLIDE
-========================= */
+// ============================================
+// SLIDE
+// ============================================
 
 function slide() {
 
     if (!running) return;
 
-    if (slideTimer > 0) return;
+    if (player.classList.contains("sliding")) return;
 
-    slideTimer = 600;
+    player.classList.add("sliding");
 
     player.style.transform =
-        "translateX(-50%) translateY(25px) scaleY(.65)";
+        "translateX(-50%) scaleY(0.55)";
 
     setTimeout(() => {
 
-        if (!running) return;
+        player.classList.remove("sliding");
 
         player.style.transform =
             "translateX(-50%)";
 
-    }, 600);
+    }, 550);
+
 }
 
-function isSliding() {
 
-    return slideTimer > 0;
-}
+// ============================================
+// KEYBOARD CONTROLS
+// ============================================
 
-/* =========================
-   PLAYER TIMER
-========================= */
+document.addEventListener("keydown", (event) => {
 
-function updatePlayer() {
+    if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
 
-    if (jumpTimer > 0) {
-
-        jumpTimer -= 16.67;
-
-        if (jumpTimer < 0) {
-            jumpTimer = 0;
-        }
-    }
-
-    if (slideTimer > 0) {
-
-        slideTimer -= 16.67;
-
-        if (slideTimer < 0) {
-            slideTimer = 0;
-        }
-    }
-}
-
-/* =========================
-   KEYBOARD
-========================= */
-
-document.addEventListener("keydown", event => {
-
-    if (
-        event.key === "ArrowLeft" ||
-        event.key.toLowerCase() === "a"
-    ) {
+        event.preventDefault();
 
         moveLeft();
+
     }
 
-    if (
-        event.key === "ArrowRight" ||
-        event.key.toLowerCase() === "d"
-    ) {
+    if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") {
+
+        event.preventDefault();
 
         moveRight();
+
     }
 
-    if (
-        event.key === "ArrowUp" ||
-        event.key === "w" ||
-        event.key === " "
-    ) {
+    if (event.key === "ArrowUp" || event.key === " ") {
 
         event.preventDefault();
 
         jump();
+
     }
 
-    if (
-        event.key === "ArrowDown" ||
-        event.key.toLowerCase() === "s"
-    ) {
+    if (event.key === "ArrowDown" || event.key.toLowerCase() === "s") {
+
+        event.preventDefault();
 
         slide();
+
     }
+
 });
 
-/* =========================
-   MOBILE BUTTONS
-========================= */
 
-document.querySelectorAll(".controls button")
-.forEach(button => {
+// ============================================
+// MOBILE BUTTONS
+// ============================================
 
-    const action =
-        button.dataset.action;
+leftButton.addEventListener("pointerdown", moveLeft);
 
-    button.addEventListener(
-        "pointerdown",
-        event => {
+rightButton.addEventListener("pointerdown", moveRight);
 
-            event.preventDefault();
+jumpButton.addEventListener("pointerdown", jump);
 
-            if (action === "left") {
-                moveLeft();
-            }
+slideButton.addEventListener("pointerdown", slide);
 
-            if (action === "right") {
+
+// ============================================
+// TOUCH SWIPE
+// ============================================
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+game.addEventListener("touchstart", (event) => {
+
+    const touch = event.changedTouches[0];
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+
+});
+
+
+game.addEventListener("touchend", (event) => {
+
+    const touch = event.changedTouches[0];
+
+    const dx = touch.clientX - touchStartX;
+    const dy = touch.clientY - touchStartY;
+
+    const minimumSwipe = 35;
+
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+
+        if (Math.abs(dx) > minimumSwipe) {
+
+            if (dx > 0) {
+
                 moveRight();
+
+            } else {
+
+                moveLeft();
+
             }
 
-            if (action === "jump") {
-                jump();
-            }
-
-            if (action === "slide") {
-                slide();
-            }
         }
-    );
+
+    } else {
+
+        if (Math.abs(dy) > minimumSwipe) {
+
+            if (dy < 0) {
+
+                jump();
+
+            } else {
+
+                slide();
+
+            }
+
+        }
+
+    }
+
 });
 
-/* =========================
-   UI
-========================= */
 
-function updateUI() {
+// ============================================
+// CREATE COIN
+// ============================================
 
-    scoreDisplay.textContent =
-        Math.floor(score);
+function createCoin() {
 
-    livesDisplay.textContent =
-        "❤️ ".repeat(lives).trim();
+    const coin = document.createElement("div");
+
+    coin.className = "coin";
+
+    coin.textContent = "★";
+
+    const randomLane =
+        Math.floor(Math.random() * 3);
+
+    coin.dataset.lane = randomLane;
+
+    coin.style.left =
+        lanes[randomLane] + "%";
+
+    coin.style.top = "-60px";
+
+    objects.appendChild(coin);
+
 }
 
-/* =========================
-   GAME OVER
-========================= */
+
+// ============================================
+// CREATE OBSTACLE
+// ============================================
+
+function createObstacle() {
+
+    const obstacle = document.createElement("div");
+
+    obstacle.className = "obstacle";
+
+    const randomLane =
+        Math.floor(Math.random() * 3);
+
+    obstacle.dataset.lane = randomLane;
+
+    obstacle.style.left =
+        lanes[randomLane] + "%";
+
+    obstacle.style.top = "-80px";
+
+    objects.appendChild(obstacle);
+
+}
+
+
+// ============================================
+// SPAWN OBJECTS
+// ============================================
+
+function spawnObjects() {
+
+    const random = Math.random();
+
+    if (random < 0.58) {
+
+        createCoin();
+
+    } else {
+
+        createObstacle();
+
+    }
+
+}
+
+
+// ============================================
+// COLLISION
+// ============================================
+
+function collision(a, b) {
+
+    const rectA = a.getBoundingClientRect();
+
+    const rectB = b.getBoundingClientRect();
+
+    return !(
+        rectA.right < rectB.left ||
+        rectA.left > rectB.right ||
+        rectA.bottom < rectB.top ||
+        rectA.top > rectB.bottom
+    );
+
+}
+
+
+// ============================================
+// UPDATE OBJECTS
+// ============================================
+
+function updateObjects() {
+
+    const allObjects =
+        document.querySelectorAll(
+            ".coin, .obstacle"
+        );
+
+
+    allObjects.forEach((object) => {
+
+        let currentTop =
+            parseFloat(object.style.top);
+
+        currentTop += speed;
+
+        object.style.top =
+            currentTop + "px";
+
+
+        // ====================================
+        // COIN
+        // ====================================
+
+        if (object.classList.contains("coin")) {
+
+            if (
+                object.dataset.lane == lane &&
+                collision(player, object)
+            ) {
+
+                score += 10;
+
+                scoreElement.textContent =
+                    score;
+
+                object.remove();
+
+            }
+
+        }
+
+
+        // ====================================
+        // OBSTACLE
+        // ====================================
+
+        if (object.classList.contains("obstacle")) {
+
+            if (
+                object.dataset.lane == lane &&
+                collision(player, object)
+            ) {
+
+                // Don't repeatedly hit same obstacle
+
+                object.remove();
+
+                loseLife();
+
+            }
+
+        }
+
+
+        // ====================================
+        // REMOVE OLD OBJECTS
+        // ====================================
+
+        if (currentTop > window.innerHeight + 100) {
+
+            object.remove();
+
+        }
+
+    });
+
+}
+
+
+// ============================================
+// LOSE LIFE
+// ============================================
+
+function loseLife() {
+
+    lives--;
+
+    updateLives();
+
+    player.animate(
+        [
+            { opacity: 1 },
+            { opacity: 0.2 },
+            { opacity: 1 }
+        ],
+        {
+            duration: 400
+        }
+    );
+
+
+    if (lives <= 0) {
+
+        endGame();
+
+    }
+
+}
+
+
+// ============================================
+// UPDATE HEARTS
+// ============================================
+
+function updateLives() {
+
+    const hearts =
+        document.querySelectorAll(".lives span");
+
+    hearts.forEach((heart, index) => {
+
+        heart.textContent =
+            index < lives
+                ? "❤️"
+                : "🖤";
+
+    });
+
+}
+
+
+// ============================================
+// SCORE
+// ============================================
+
+function updateScore() {
+
+    if (!running) return;
+
+    score++;
+
+    scoreElement.textContent =
+        score;
+
+}
+
+
+// ============================================
+// INCREASE SPEED
+// ============================================
+
+function increaseSpeed() {
+
+    if (!running) return;
+
+    speed += 0.002;
+
+}
+
+
+// ============================================
+// GAME LOOP
+// ============================================
+
+function gameLoop() {
+
+    if (!running) return;
+
+
+    gameTime++;
+
+    spawnTimer++;
+
+
+    if (spawnTimer > 65) {
+
+        spawnObjects();
+
+        spawnTimer = 0;
+
+    }
+
+
+    updateObjects();
+
+    increaseSpeed();
+
+
+    if (gameTime % 12 === 0) {
+
+        updateScore();
+
+    }
+
+
+    animationFrame =
+        requestAnimationFrame(gameLoop);
+
+}
+
+
+// ============================================
+// START GAME
+// ============================================
+
+function startGame() {
+
+    running = true;
+
+    score = 0;
+
+    lives = 3;
+
+    lane = 1;
+
+    speed = 6;
+
+    gameTime = 0;
+
+    spawnTimer = 0;
+
+
+    scoreElement.textContent =
+        "0";
+
+    updateLives();
+
+    updatePlayerLane();
+
+
+    objects.innerHTML = "";
+
+
+    startScreen.classList.add("hidden");
+
+    gameOverScreen.classList.add("hidden");
+
+
+    cancelAnimationFrame(animationFrame);
+
+    gameLoop();
+
+}
+
+
+// ============================================
+// END GAME
+// ============================================
 
 function endGame() {
 
     running = false;
 
-    finalScore.textContent =
-        Math.floor(score);
+    cancelAnimationFrame(animationFrame);
 
-    gameOverScreen.classList.remove("hidden");
+    finalScoreElement.textContent =
+        score;
+
+    gameOverScreen.classList.remove(
+        "hidden"
+    );
+
 }
 
-/* =========================
-   INITIAL STATE
-========================= */
 
-player.style.left =
-    lanePositions[1];
+// ============================================
+// BUTTONS
+// ============================================
 
-updateUI();
-```
+startButton.addEventListener(
+    "click",
+    startGame
+);
+
+restartButton.addEventListener(
+    "click",
+    startGame
+);
+
+
+// ============================================
+// INITIAL POSITION
+// ============================================
+
+updatePlayerLane();
+
+updateLives();
