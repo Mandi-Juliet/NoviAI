@@ -1,4 +1,4 @@
-```javascript
+
 const boardElement = document.getElementById("chessBoard");
 
 const turnDisplay = document.getElementById("turnDisplay");
