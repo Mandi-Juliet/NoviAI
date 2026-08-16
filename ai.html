@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,13 +9,12 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5JXPL3GSR7"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-
         function gtag() {
             dataLayer.push(arguments);
         }
 
-        gtag('js', new Date());
-        gtag('config', 'G-5JXPL3GSR7');
+        gtag("js", new Date());
+        gtag("config", "G-5JXPL3GSR7");
     </script>
 
     <title>NoviAI Workspace</title>
@@ -37,58 +35,34 @@
             <span>NoviAI</span>
         </div>
 
-        <button
-            class="new-chat"
-            type="button"
-            onclick="newChat()"
-        >
+        <button class="new-chat" type="button" onclick="newChat()">
             <span>＋</span>
             New Chat
         </button>
 
         <nav class="sidebar-nav">
 
-            <button
-                class="nav-item active"
-                type="button"
-                onclick="changeMode('Study')"
-            >
+            <button class="nav-item" type="button" onclick="changeMode('Study')">
                 <span class="nav-icon">📚</span>
                 <span>Study</span>
             </button>
 
-            <button
-                class="nav-item"
-                type="button"
-                onclick="openLearnLoop()"
-            >
+            <button class="nav-item" type="button" onclick="openLearnLoop()">
                 <span class="nav-icon">🔄</span>
                 <span>LearnLoop</span>
             </button>
 
-            <button
-                class="nav-item"
-                type="button"
-                onclick="changeMode('Create')"
-            >
+            <button class="nav-item" type="button" onclick="changeMode('Create')">
                 <span class="nav-icon">📝</span>
                 <span>Create</span>
             </button>
 
-            <button
-                class="nav-item"
-                type="button"
-                onclick="changeMode('Ask')"
-            >
+            <button class="nav-item active" type="button" onclick="changeMode('Ask')">
                 <span class="nav-icon">💡</span>
                 <span>Ask Anything</span>
             </button>
 
-            <button
-                class="nav-item"
-                type="button"
-                onclick="changeMode('Support')"
-            >
+            <button class="nav-item" type="button" onclick="changeMode('Support')">
                 <span class="nav-icon">💙</span>
                 <span>Support</span>
             </button>
@@ -97,10 +71,7 @@
 
         <div class="sidebar-bottom">
 
-            <button
-                class="bottom-item"
-                type="button"
-            >
+            <button class="bottom-item" type="button">
                 <span>⚙️</span>
                 Settings
             </button>
@@ -128,11 +99,9 @@
         <header class="topbar">
 
             <div>
-                <h1 id="modeTitle">
-                    Ask NoviAI
-                </h1>
+                <h1 id="pageTitle">Ask NoviAI</h1>
 
-                <p id="modeDescription">
+                <p id="pageSubtitle">
                     Ask questions and get helpful answers.
                 </p>
             </div>
@@ -147,10 +116,7 @@
 
         <!-- ================= CHAT ================= -->
 
-        <section
-            class="chat-area"
-            id="chat"
-        >
+        <section class="chat-area" id="chat">
 
             <div class="welcome">
 
@@ -158,20 +124,17 @@
                     ✦
                 </div>
 
-                <h2>
-                    Hello! 👋
-                </h2>
+                <h2>Hello! 👋</h2>
 
                 <p>
                     I'm NoviAI. What can I help you with today?
                 </p>
 
-
                 <div class="quick-actions">
 
                     <button
                         type="button"
-                        onclick="useSuggestion('Explain a topic')"
+                        onclick="usePrompt('Explain a topic')"
                     >
                         <span>📚</span>
                         Explain a topic
@@ -179,7 +142,7 @@
 
                     <button
                         type="button"
-                        onclick="useSuggestion('Create a study plan')"
+                        onclick="usePrompt('Create a study plan')"
                     >
                         <span>📅</span>
                         Create a study plan
@@ -187,7 +150,7 @@
 
                     <button
                         type="button"
-                        onclick="useSuggestion('Write a proposal')"
+                        onclick="usePrompt('Write a proposal')"
                     >
                         <span>📝</span>
                         Write a proposal
@@ -195,7 +158,7 @@
 
                     <button
                         type="button"
-                        onclick="useSuggestion('Talk to me')"
+                        onclick="usePrompt('Talk to me')"
                     >
                         <span>💙</span>
                         Talk to me
@@ -229,7 +192,6 @@
                     📎
                 </button>
 
-
                 <textarea
                     id="messageInput"
                     placeholder="Ask NoviAI anything..."
@@ -237,19 +199,17 @@
                     onkeydown="handleKey(event)"
                 ></textarea>
 
-
                 <button
                     id="sendButton"
                     class="send-btn"
                     type="button"
-                    onclick="sendMessage()"
                     aria-label="Send message"
+                    onclick="sendMessage()"
                 >
                     ➤
                 </button>
 
             </div>
-
 
             <p class="disclaimer">
                 NoviAI can make mistakes. Check important information.
@@ -279,23 +239,18 @@
             ×
         </button>
 
-
         <div class="learnloop-icon">
             🔄
         </div>
 
-
-        <h2>
-            NoviAI LearnLoop
-        </h2>
-
+        <h2>NoviAI LearnLoop</h2>
 
         <p class="learnloop-subtitle">
             Learn it. Practise it. Master it.
         </p>
 
 
-        <!-- ================= START SCREEN ================= -->
+        <!-- START -->
 
         <div id="learnLoopStart">
 
@@ -309,7 +264,6 @@
                 placeholder="Example: Photosynthesis"
             >
 
-
             <label>
                 Subject
             </label>
@@ -320,40 +274,28 @@
                 placeholder="Example: Biology"
             >
 
-
             <label>
                 Difficulty
             </label>
 
             <select id="learnLoopDifficulty">
-
-                <option>
-                    Beginner
-                </option>
-
-                <option selected>
-                    Intermediate
-                </option>
-
-                <option>
-                    Advanced
-                </option>
-
+                <option>Beginner</option>
+                <option selected>Intermediate</option>
+                <option>Advanced</option>
             </select>
-
 
             <button
                 class="learnloop-start"
                 type="button"
                 onclick="startLearnLoop()"
             >
-                🚀 Start LearnLoop
+                🚀 Start Learning
             </button>
 
         </div>
 
 
-        <!-- ================= LESSON SCREEN ================= -->
+        <!-- LESSON -->
 
         <div
             id="learnLoopLessonScreen"
@@ -364,7 +306,6 @@
                 id="learnLoopLesson"
                 class="learnloop-lesson"
             ></div>
-
 
             <button
                 class="learnloop-start"
@@ -377,7 +318,7 @@
         </div>
 
 
-        <!-- ================= QUIZ SCREEN ================= -->
+        <!-- QUIZ -->
 
         <div
             id="learnLoopQuizScreen"
@@ -385,7 +326,6 @@
         >
 
             <div id="learnLoopQuestions"></div>
-
 
             <button
                 class="learnloop-start"
@@ -398,7 +338,7 @@
         </div>
 
 
-        <!-- ================= RESULT SCREEN ================= -->
+        <!-- RESULT -->
 
         <div
             id="learnLoopResultScreen"
@@ -410,12 +350,10 @@
                 class="learnloop-score"
             ></div>
 
-
             <div
                 id="learnLoopFeedback"
                 class="learnloop-feedback"
             ></div>
-
 
             <button
                 class="learnloop-start"
@@ -432,10 +370,9 @@
 </div>
 
 
-<!-- ================= JAVASCRIPT ================= -->
+<!-- IMPORTANT: LOAD JAVASCRIPT LAST -->
 
 <script src="ai.js"></script>
 
 </body>
 </html>
-```
