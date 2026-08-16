@@ -1,181 +1,127 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>NoviAI Run</title>
+    <title>NoviAI Chase</title>
 
     <link rel="stylesheet" href="game.css">
 </head>
 
 <body>
 
-<div id="game">
+    <div class="game">
 
-    <!-- CITY BACKGROUND -->
-    <div class="sky"></div>
+        <header class="game-header">
+            <button class="back-btn" onclick="location.href='ai.html'">← NoviAI</button>
 
-    <div class="city city-back">
-        <span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span>
-    </div>
-
-    <div class="city city-front">
-        <span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span>
-    </div>
-
-    <!-- GAME HEADER -->
-
-    <div class="hud">
-
-        <div class="stat">
-            ⭐ <span id="score">0</span>
-        </div>
-
-        <div class="game-title">
-            ✦ NoviAI Run
-        </div>
-
-        <div class="lives">
-            <span>❤️</span>
-            <span>❤️</span>
-            <span>❤️</span>
-        </div>
-
-    </div>
-
-
-    <!-- ROAD -->
-
-    <div class="road">
-
-        <div class="lane lane-left"></div>
-        <div class="lane lane-middle"></div>
-        <div class="lane lane-right"></div>
-
-        <div class="road-line line1"></div>
-        <div class="road-line line2"></div>
-        <div class="road-line line3"></div>
-        <div class="road-line line4"></div>
-
-    </div>
-
-
-    <!-- OBJECTS WILL BE CREATED BY JAVASCRIPT -->
-
-    <div id="objects"></div>
-
-
-    <!-- PLAYER -->
-
-    <div id="player">
-
-        <div class="character">
-
-            <div class="hair"></div>
-
-            <div class="head">
-                <div class="eye left-eye"></div>
-                <div class="eye right-eye"></div>
-                <div class="mouth"></div>
+            <div class="game-title">
+                <span>✦</span> NOVIAI CHASE
             </div>
 
-            <div class="body">
-                <div class="logo-star">✦</div>
+            <div class="score-box">
+                <div>SCORE</div>
+                <strong id="score">0</strong>
+            </div>
+        </header>
+
+        <div class="game-area" id="gameArea">
+
+            <div class="sky"></div>
+
+            <div class="city city-back"></div>
+            <div class="city city-front"></div>
+
+            <div class="road">
+
+                <div class="lane-line line1"></div>
+                <div class="lane-line line2"></div>
+
+                <div class="lane-marker marker1"></div>
+                <div class="lane-marker marker2"></div>
+
+                <div id="coins"></div>
+                <div id="obstacles"></div>
+
+                <!-- PLAYER -->
+                <div id="player" class="player">
+
+                    <div class="hair"></div>
+
+                    <div class="head"></div>
+
+                    <div class="body">
+                        <div class="backpack"></div>
+                    </div>
+
+                    <div class="arm arm-left"></div>
+                    <div class="arm arm-right"></div>
+
+                    <div class="leg leg-left"></div>
+                    <div class="leg leg-right"></div>
+
+                </div>
+
             </div>
 
-            <div class="arm arm-left"></div>
-            <div class="arm arm-right"></div>
+            <div class="start-screen" id="startScreen">
 
-            <div class="leg leg-left"></div>
-            <div class="leg leg-right"></div>
+                <div class="game-logo">✦</div>
 
-            <div class="shoe shoe-left"></div>
-            <div class="shoe shoe-right"></div>
+                <h1>NoviAI Chase</h1>
 
-        </div>
+                <p>
+                    Run, dodge and collect coins.
+                </p>
 
-    </div>
+                <p class="controls">
+                    ← → Move &nbsp; • &nbsp; ↑ Jump &nbsp; • &nbsp; ↓ Slide
+                </p>
 
+                <button id="startButton">
+                    START RUN
+                </button>
 
-    <!-- START SCREEN -->
-
-    <div id="startScreen" class="screen">
-
-        <div class="start-card">
-
-            <div class="big-logo">✦</div>
-
-            <h1>NoviAI Run</h1>
-
-            <p>
-                Run through the city.<br>
-                Collect coins. Dodge obstacles.
-            </p>
-
-            <button id="startButton">
-                ▶ START RUN
-            </button>
-
-            <div class="controls-help">
-                ← → Move &nbsp; ↑ Jump &nbsp; ↓ Slide
             </div>
 
-        </div>
+            <div class="game-over" id="gameOver">
 
-    </div>
+                <div class="game-logo">✦</div>
 
+                <h1>RUN OVER</h1>
 
-    <!-- GAME OVER -->
+                <p>Your score</p>
 
-    <div id="gameOver" class="screen hidden">
-
-        <div class="start-card">
-
-            <div class="big-logo">💫</div>
-
-            <h1>Run Over</h1>
-
-            <p>
-                Your score:
                 <strong id="finalScore">0</strong>
-            </p>
 
-            <button id="restartButton">
-                🔄 RUN AGAIN
-            </button>
+                <button id="restartButton">
+                    RUN AGAIN
+                </button>
+
+            </div>
+
+            <!-- MOBILE CONTROLS -->
+
+            <div class="mobile-controls">
+
+                <button id="leftButton">←</button>
+
+                <button id="jumpButton">↑</button>
+
+                <button id="slideButton">↓</button>
+
+                <button id="rightButton">→</button>
+
+            </div>
 
         </div>
 
     </div>
 
-
-    <!-- MOBILE CONTROLS -->
-
-    <div class="mobile-controls">
-
-        <button id="leftButton">◀</button>
-
-        <button id="jumpButton">▲</button>
-
-        <button id="slideButton">▼</button>
-
-        <button id="rightButton">▶</button>
-
-    </div>
-
-
-    <div class="tip">
-        Collect ⭐ coins and stay alive!
-    </div>
-
-</div>
-
-
-<script src="game.js"></script>
+    <script src="game.js"></script>
 
 </body>
 </html>
+```
