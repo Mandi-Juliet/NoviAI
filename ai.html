@@ -1,3 +1,7 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5,12 +9,14 @@
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5JXPL3GSR7"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+        window.dataLayer = window.dataLayer || [];
 
-      gtag('js', new Date());
+        function gtag() {
+            dataLayer.push(arguments);
+        }
 
-      gtag('config', 'G-5JXPL3GSR7');
+        gtag('js', new Date());
+        gtag('config', 'G-5JXPL3GSR7');
     </script>
 
     <title>NoviAI Workspace</title>
@@ -31,41 +37,58 @@
             <span>NoviAI</span>
         </div>
 
-        <button class="new-chat" onclick="location.reload()">
+        <button
+            class="new-chat"
+            type="button"
+            onclick="newChat()"
+        >
             <span>＋</span>
             New Chat
         </button>
 
         <nav class="sidebar-nav">
 
-            <button class="nav-item active" onclick="setMode('Study')">
-                ```html
-<button class="nav-item" onclick="openLearnLoop()">
-    <span class="nav-icon">🔄</span>
-    <span>LearnLoop</span>
-</button>
-```
-
+            <button
+                class="nav-item active"
+                type="button"
+                onclick="changeMode('Study')"
+            >
                 <span class="nav-icon">📚</span>
                 <span>Study</span>
             </button>
 
-            <button class="nav-item learnloop-button" onclick="openLearnLoop()">
-    <span class="nav-icon">🔄</span>
-    <span>LearnLoop</span>
-</button>
+            <button
+                class="nav-item"
+                type="button"
+                onclick="openLearnLoop()"
+            >
+                <span class="nav-icon">🔄</span>
+                <span>LearnLoop</span>
+            </button>
 
-            <button class="nav-item" onclick="setMode('Create')">
+            <button
+                class="nav-item"
+                type="button"
+                onclick="changeMode('Create')"
+            >
                 <span class="nav-icon">📝</span>
                 <span>Create</span>
             </button>
 
-            <button class="nav-item" onclick="setMode('Ask')">
+            <button
+                class="nav-item"
+                type="button"
+                onclick="changeMode('Ask')"
+            >
                 <span class="nav-icon">💡</span>
                 <span>Ask Anything</span>
             </button>
 
-            <button class="nav-item" onclick="setMode('Support')">
+            <button
+                class="nav-item"
+                type="button"
+                onclick="changeMode('Support')"
+            >
                 <span class="nav-icon">💙</span>
                 <span>Support</span>
             </button>
@@ -74,12 +97,19 @@
 
         <div class="sidebar-bottom">
 
-            <button class="bottom-item">
+            <button
+                class="bottom-item"
+                type="button"
+            >
                 <span>⚙️</span>
                 Settings
             </button>
 
-            <button class="bottom-item" onclick="window.location.href='index.html'">
+            <button
+                class="bottom-item"
+                type="button"
+                onclick="goHome()"
+            >
                 <span>🏠</span>
                 Home
             </button>
@@ -98,8 +128,11 @@
         <header class="topbar">
 
             <div>
-                <h1 id="pageTitle">Ask NoviAI</h1>
-                <p id="pageSubtitle">
+                <h1 id="modeTitle">
+                    Ask NoviAI
+                </h1>
+
+                <p id="modeDescription">
                     Ask questions and get helpful answers.
                 </p>
             </div>
@@ -114,7 +147,10 @@
 
         <!-- ================= CHAT ================= -->
 
-        <section class="chat-area" id="chat">
+        <section
+            class="chat-area"
+            id="chat"
+        >
 
             <div class="welcome">
 
@@ -122,41 +158,57 @@
                     ✦
                 </div>
 
-                <h2>Hello! 👋</h2>
+                <h2>
+                    Hello! 👋
+                </h2>
 
                 <p>
                     I'm NoviAI. What can I help you with today?
                 </p>
 
+
                 <div class="quick-actions">
 
-```
-<button onclick="usePrompt('Explain a topic')">
-    <span>📚</span>
-    Explain a topic
-</button>
+                    <button
+                        type="button"
+                        onclick="useSuggestion('Explain a topic')"
+                    >
+                        <span>📚</span>
+                        Explain a topic
+                    </button>
 
-<button onclick="usePrompt('Create a study plan')">
-    <span>📅</span>
-    Create a study plan
-</button>
+                    <button
+                        type="button"
+                        onclick="useSuggestion('Create a study plan')"
+                    >
+                        <span>📅</span>
+                        Create a study plan
+                    </button>
 
-<button onclick="usePrompt('Write a proposal')">
-    <span>📝</span>
-    Write a proposal
-</button>
+                    <button
+                        type="button"
+                        onclick="useSuggestion('Write a proposal')"
+                    >
+                        <span>📝</span>
+                        Write a proposal
+                    </button>
 
-<button onclick="usePrompt('Talk to me')">
-    <span>💙</span>
-    Talk to me
-</button>
+                    <button
+                        type="button"
+                        onclick="useSuggestion('Talk to me')"
+                    >
+                        <span>💙</span>
+                        Talk to me
+                    </button>
 
-<a href="game.html" class="game-button">
-    🎮 Chase Game
-</a>
+                    <a
+                        href="game.html"
+                        class="game-button"
+                    >
+                        🎮 Chase Game
+                    </a>
 
-</div>
-
+                </div>
 
             </div>
 
@@ -169,28 +221,35 @@
 
             <div class="composer">
 
-                <button class="attach-btn" type="button" title="Attach">
+                <button
+                    class="attach-btn"
+                    type="button"
+                    title="Attach"
+                >
                     📎
                 </button>
+
 
                 <textarea
                     id="messageInput"
                     placeholder="Ask NoviAI anything..."
                     rows="1"
-                    onkeydown="handleKeyDown(event)"
+                    onkeydown="handleKey(event)"
                 ></textarea>
+
 
                 <button
                     id="sendButton"
                     class="send-btn"
-                    onclick="sendMessage()"
                     type="button"
+                    onclick="sendMessage()"
                     aria-label="Send message"
                 >
                     ➤
                 </button>
 
             </div>
+
 
             <p class="disclaimer">
                 NoviAI can make mistakes. Check important information.
@@ -202,30 +261,41 @@
 
 </div>
 
-    <!-- ================= LEARNLOOP ================= -->
 
-<div id="learnLoopModal" class="learnloop-modal">
+<!-- ================= LEARNLOOP MODAL ================= -->
+
+<div
+    id="learnLoopModal"
+    class="learnloop-modal"
+>
 
     <div class="learnloop-card">
 
         <button
             class="learnloop-close"
+            type="button"
             onclick="closeLearnLoop()"
         >
             ×
         </button>
 
+
         <div class="learnloop-icon">
             🔄
         </div>
 
-        <h2>NoviAI LearnLoop</h2>
+
+        <h2>
+            NoviAI LearnLoop
+        </h2>
+
 
         <p class="learnloop-subtitle">
             Learn it. Practise it. Master it.
         </p>
 
-        <!-- START SCREEN -->
+
+        <!-- ================= START SCREEN ================= -->
 
         <div id="learnLoopStart">
 
@@ -236,8 +306,9 @@
             <input
                 id="learnLoopTopic"
                 type="text"
-                placeholder="e.g. Photosynthesis"
+                placeholder="Example: Photosynthesis"
             >
+
 
             <label>
                 Subject
@@ -246,21 +317,34 @@
             <input
                 id="learnLoopSubject"
                 type="text"
-                placeholder="e.g. Biology"
+                placeholder="Example: Biology"
             >
+
 
             <label>
                 Difficulty
             </label>
 
             <select id="learnLoopDifficulty">
-                <option>Beginner</option>
-                <option selected>Intermediate</option>
-                <option>Advanced</option>
+
+                <option>
+                    Beginner
+                </option>
+
+                <option selected>
+                    Intermediate
+                </option>
+
+                <option>
+                    Advanced
+                </option>
+
             </select>
+
 
             <button
                 class="learnloop-start"
+                type="button"
                 onclick="startLearnLoop()"
             >
                 🚀 Start LearnLoop
@@ -269,688 +353,7 @@
         </div>
 
 
-        <!-- LEARNING SCREEN -->
-
-        <div
-            id="learnLoopContent"
-            style="display:none;"
-        >
-
-            <div
-                id="learnLoopLesson"
-                class="learnloop-lesson"
-            ></div>
-
-            <button
-                id="learnLoopQuizButton"
-                class="learnloop-start"
-                onclick="generateLearnLoopQuiz()"
-            >
-                🧠 I'm Ready — Quiz Me
-            </button>
-
-        </div>
-
-
-        <!-- QUIZ SCREEN -->
-
-        <div
-            id="learnLoopQuiz"
-            style="display:none;"
-        >
-
-            <div id="learnLoopQuestions"></div>
-
-            <button
-                class="learnloop-start"
-                onclick="submitLearnLoopQuiz()"
-            >
-                🎯 Check My Answers
-            </button>
-
-        </div>
-
-
-        <!-- RESULT SCREEN -->
-
-        <div
-            id="learnLoopResult"
-            style="display:none;"
-        >
-
-            <div id="learnLoopScore"></div>
-
-            <div id="learnLoopFeedback"></div>
-
-            <button
-                class="learnloop-start"
-                onclick="nextLearnLoopChallenge()"
-            >
-                🔥 Next Challenge
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- Keep your existing working AI JavaScript -->
-    <script>
-
-/* ===============================
-   NOVIAI LEARNLOOP
-   =============================== */
-
-let learnLoopTopic = "";
-let learnLoopSubject = "";
-let learnLoopDifficulty = "";
-let learnLoopLesson = "";
-let learnLoopQuestions = [];
-
-
-/* OPEN */
-
-function openLearnLoop() {
-
-    document
-        .getElementById("learnLoopModal")
-        .classList.add("show");
-
-}
-
-
-/* CLOSE */
-
-function closeLearnLoop() {
-
-    document
-        .getElementById("learnLoopModal")
-        .classList.remove("show");
-
-}
-
-
-/* START */
-
-async function startLearnLoop() {
-
-    learnLoopTopic =
-        document
-            .getElementById("learnLoopTopic")
-            .value
-            .trim();
-
-    learnLoopSubject =
-        document
-            .getElementById("learnLoopSubject")
-            .value
-            .trim();
-
-    learnLoopDifficulty =
-        document
-            .getElementById("learnLoopDifficulty")
-            .value;
-
-
-    if (!learnLoopTopic) {
-
-        alert(
-            "Please enter something you want to learn."
-        );
-
-        return;
-    }
-
-
-    document
-        .getElementById("learnLoopStart")
-        .style.display = "none";
-
-    document
-        .getElementById("learnLoopContent")
-        .style.display = "block";
-
-
-    document
-        .getElementById("learnLoopLesson")
-        .innerHTML =
-        "🔄 NoviAI is preparing your lesson...";
-
-
-    try {
-
-        const response =
-            await fetch("/chat", {
-
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    message:
-                        `You are teaching a student using NoviAI LearnLoop.
-
-Teach this topic:
-
-Subject: ${learnLoopSubject}
-
-Topic: ${learnLoopTopic}
-
-Difficulty: ${learnLoopDifficulty}
-
-Give a clear, student-friendly lesson.
-
-Structure it as:
-
-1. What it means
-2. The key ideas
-3. A simple example
-4. Important points to remember
-
-Do not give quiz questions yet.`,
-
-                    mode: "Study"
-
-                })
-
-            });
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                "Lesson failed."
-            );
-
-        }
-
-
-        learnLoopLesson =
-            data.reply || "";
-
-
-        document
-            .getElementById("learnLoopLesson")
-            .innerHTML =
-            formatLearnLoopText(
-                learnLoopLesson
-            );
-
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "LearnLoop lesson error:",
-            error
-        );
-
-
-        document
-            .getElementById("learnLoopLesson")
-            .innerHTML =
-            "❌ I couldn't prepare the lesson. Please try again.";
-
-    }
-
-}
-
-
-/* QUIZ */
-
-async function generateLearnLoopQuiz() {
-
-    document
-        .getElementById("learnLoopQuizButton")
-        .textContent =
-        "🔄 Creating your challenge...";
-
-
-    try {
-
-        const response =
-            await fetch("/chat", {
-
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    message:
-                        `Create a 5-question multiple-choice quiz for a student who just learned:
-
-Subject: ${learnLoopSubject}
-
-Topic: ${learnLoopTopic}
-
-Difficulty: ${learnLoopDifficulty}
-
-Create exactly 5 questions.
-
-For each question provide:
-
-Question
-A.
-B.
-C.
-D.
-
-Do NOT provide the answers.
-
-Keep the questions focused on the topic.`,
-
-                    mode: "Study"
-
-                })
-
-            });
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                "Quiz failed."
-            );
-
-        }
-
-
-        learnLoopQuestions =
-            data.reply || "";
-
-
-        document
-            .getElementById("learnLoopContent")
-            .style.display = "none";
-
-
-        document
-            .getElementById("learnLoopQuiz")
-            .style.display = "block";
-
-
-        document
-            .getElementById("learnLoopQuestions")
-            .innerHTML =
-            formatQuizText(
-                learnLoopQuestions
-            );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "LearnLoop quiz error:",
-            error
-        );
-
-
-        document
-            .getElementById("learnLoopQuizButton")
-            .textContent =
-            "🧠 I'm Ready — Quiz Me";
-
-
-        alert(
-            "I couldn't create the quiz. Please try again."
-        );
-
-    }
-
-}
-
-
-/* SUBMIT QUIZ */
-
-async function submitLearnLoopQuiz() {
-
-    const answers =
-        document
-            .getElementById(
-                "learnLoopQuestions"
-            )
-            .innerText;
-
-
-    document
-        .getElementById("learnLoopQuiz")
-        .style.display = "none";
-
-
-    document
-        .getElementById("learnLoopResult")
-        .style.display = "block";
-
-
-    document
-        .getElementById("learnLoopScore")
-        .textContent =
-        "🔄 Checking your answers...";
-
-
-    try {
-
-        const response =
-            await fetch("/chat", {
-
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    message:
-                        `You are scoring a NoviAI LearnLoop quiz.
-
-Topic: ${learnLoopTopic}
-
-Here is the quiz:
-
-${learnLoopQuestions}
-
-The student's submitted responses are shown below:
-
-${answers}
-
-Evaluate the student's responses.
-
-Give:
-
-- Score out of 5
-- Percentage
-- What they understood
-- What they need to improve
-- One short recommendation for their next revision.
-
-Be encouraging and clear.`,
-
-                    mode: "Study"
-
-                })
-
-            });
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                "Scoring failed."
-            );
-
-        }
-
-
-        const result =
-            data.reply || "";
-
-
-        document
-            .getElementById("learnLoopScore")
-            .textContent =
-            "🎯 Your LearnLoop Result";
-
-
-        document
-            .getElementById("learnLoopFeedback")
-            .innerHTML =
-            formatLearnLoopText(
-                result
-            );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "LearnLoop scoring error:",
-            error
-        );
-
-
-        document
-            .getElementById("learnLoopScore")
-            .textContent =
-            "❌ Couldn't score the quiz";
-
-
-        document
-            .getElementById("learnLoopFeedback")
-            .textContent =
-            "Please try the challenge again.";
-
-    }
-
-}
-
-
-/* NEXT CHALLENGE */
-
-function nextLearnLoopChallenge() {
-
-    document
-        .getElementById("learnLoopResult")
-        .style.display = "none";
-
-
-    document
-        .getElementById("learnLoopStart")
-        .style.display = "block";
-
-
-    document
-        .getElementById("learnLoopTopic")
-        .value =
-        learnLoopTopic;
-
-
-    document
-        .getElementById("learnLoopSubject")
-        .value =
-        learnLoopSubject;
-
-}
-
-
-/* BASIC FORMATTING */
-
-function formatLearnLoopText(text) {
-
-    return text
-
-        .replace(/&/g, "&amp;")
-
-        .replace(/</g, "&lt;")
-
-        .replace(/>/g, "&gt;")
-
-        .replace(/\*\*(.*?)\*\*/g,
-            "<strong>$1</strong>"
-        )
-
-        .replace(/\n/g, "<br>");
-
-}
-
-
-/* QUIZ DISPLAY */
-
-function formatQuizText(text) {
-
-    let html =
-        text
-
-        .replace(/&/g, "&amp;")
-
-        .replace(/</g, "&lt;")
-
-        .replace(/>/g, "&gt;");
-
-
-    const lines =
-        html.split("\n");
-
-
-    let output = "";
-
-
-    lines.forEach(line => {
-
-        line =
-            line.trim();
-
-
-        if (!line) {
-            return;
-        }
-
-
-        if (
-            /^\d+[\.\)]/.test(line)
-        ) {
-
-            output +=
-                `<div class="learnloop-question">
-                    <h3>${line}</h3>`;
-
-            return;
-
-        }
-
-
-        if (
-            /^[A-D][\.\)]/.test(line)
-        ) {
-
-            const id =
-                "option_" +
-                Math.random()
-                    .toString(36)
-                    .substring(2);
-
-
-            output +=
-                `<label class="learnloop-option">
-                    <input
-                        type="radio"
-                        name="${id}"
-                    >
-                    ${line}
-                </label>`;
-
-            return;
-
-        }
-
-
-        output +=
-            `<div>${line}</div>`;
-
-    });
-
-
-    output +=
-        "</div>";
-
-
-    return output;
-
-}
-
-</script>
-    ```html
-<!-- ================= LEARNLOOP ================= -->
-
-<div id="learnLoopModal" class="learnloop-modal">
-
-    <div class="learnloop-card">
-
-        <button
-            class="learnloop-close"
-            onclick="closeLearnLoop()"
-        >
-            ×
-        </button>
-
-        <div class="learnloop-icon">
-            🔄
-        </div>
-
-        <h2>NoviAI LearnLoop</h2>
-
-        <p class="learnloop-subtitle">
-            Learn it. Practise it. Master it.
-        </p>
-
-
-        <!-- START -->
-
-        <div id="learnLoopStart">
-
-            <label>What do you want to learn?</label>
-
-            <input
-                id="learnLoopTopic"
-                type="text"
-                placeholder="Example: Photosynthesis"
-            >
-
-            <label>Subject</label>
-
-            <input
-                id="learnLoopSubject"
-                type="text"
-                placeholder="Example: Biology"
-            >
-
-            <label>Difficulty</label>
-
-            <select id="learnLoopDifficulty">
-                <option>Beginner</option>
-                <option selected>Intermediate</option>
-                <option>Advanced</option>
-            </select>
-
-            <button
-                class="learnloop-start"
-                onclick="startLearnLoop()"
-            >
-                🚀 Start Learning
-            </button>
-
-        </div>
-
-
-        <!-- LESSON -->
+        <!-- ================= LESSON SCREEN ================= -->
 
         <div
             id="learnLoopLessonScreen"
@@ -962,8 +365,10 @@ function formatQuizText(text) {
                 class="learnloop-lesson"
             ></div>
 
+
             <button
                 class="learnloop-start"
+                type="button"
                 onclick="createLearnLoopQuiz()"
             >
                 🧠 I'm Ready — Quiz Me
@@ -972,7 +377,7 @@ function formatQuizText(text) {
         </div>
 
 
-        <!-- QUIZ -->
+        <!-- ================= QUIZ SCREEN ================= -->
 
         <div
             id="learnLoopQuizScreen"
@@ -981,8 +386,10 @@ function formatQuizText(text) {
 
             <div id="learnLoopQuestions"></div>
 
+
             <button
                 class="learnloop-start"
+                type="button"
                 onclick="submitLearnLoopQuiz()"
             >
                 🎯 Submit Answers
@@ -991,7 +398,7 @@ function formatQuizText(text) {
         </div>
 
 
-        <!-- RESULT -->
+        <!-- ================= RESULT SCREEN ================= -->
 
         <div
             id="learnLoopResultScreen"
@@ -1003,13 +410,16 @@ function formatQuizText(text) {
                 class="learnloop-score"
             ></div>
 
+
             <div
                 id="learnLoopFeedback"
                 class="learnloop-feedback"
             ></div>
 
+
             <button
                 class="learnloop-start"
+                type="button"
                 onclick="nextLearnLoopChallenge()"
             >
                 🔥 Next Challenge
@@ -1021,7 +431,11 @@ function formatQuizText(text) {
 
 </div>
 
+
+<!-- ================= JAVASCRIPT ================= -->
+
 <script src="ai.js"></script>
 
 </body>
 </html>
+```
