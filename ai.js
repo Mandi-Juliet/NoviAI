@@ -955,10 +955,8 @@ function goHome() {
 
 }
 
-````javascript
 /* =========================================
    NOVIAI LEARNLOOP
-   ========================================= */
 
 let learnLoopTopic = "";
 let learnLoopSubject = "";
@@ -1622,5 +1620,4 @@ function learnLoopFormatText(text) {
             "<br>"
         );
 
-}
-````
+
